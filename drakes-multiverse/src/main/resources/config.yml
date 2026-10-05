@@ -58,6 +58,18 @@ network:
     craft: 20
 
 # -------------------------------------------------------------------------------------
+#  Node Storage / Almacenamiento de Nodos
+# -------------------------------------------------------------------------------------
+storage:
+  # [EN] Seconds between background saves of the node region files
+  #      (<world>/multiversenets/r.<x>.<z>.mvn). Only regions that changed are written, off the
+  #      main thread. /save-all and shutdown always save immediately.
+  # [ES] Segundos entre guardados en segundo plano de los archivos de región de nodos
+  #      (<mundo>/multiversenets/r.<x>.<z>.mvn). Solo se escriben las regiones que cambiaron, fuera
+  #      del hilo principal. /save-all y el apagado siempre guardan al momento.
+  autosave-seconds: 30
+
+# -------------------------------------------------------------------------------------
 #  Item Logistics / Transferencia de Ítems
 # -------------------------------------------------------------------------------------
 transfer:

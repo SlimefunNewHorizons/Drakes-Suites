@@ -498,15 +498,12 @@ class BlockFlowsTest {
         assertTrue(NodeStore.hasNode(cable));
         assertFalse(NodeStore.hasNode(empty));
         assertEquals(DeviceType.MVN_CABLE, NodeStore.getType(cable));
+        assertTrue(cable.getChunk().getPersistentDataContainer().getKeys().isEmpty(),
+                "node data lives in the region files, never in the chunk PDC");
 
-        // Test self-healing fallback when nodeTypeKey is removed
-        org.bukkit.NamespacedKey typeKey = new org.bukkit.NamespacedKey(plugin, "t10_64_10");
-        cable.getChunk().getPersistentDataContainer().remove(typeKey);
-        assertFalse(cable.getChunk().getPersistentDataContainer().has(typeKey, PersistentDataType.STRING));
-
-        // getType should fall back to blob decode and restore typeKey
-        assertEquals(DeviceType.MVN_CABLE, NodeStore.getType(cable));
-        assertTrue(cable.getChunk().getPersistentDataContainer().has(typeKey, PersistentDataType.STRING));
+        NodeStore.remove(cable);
+        assertFalse(NodeStore.hasNode(cable));
+        assertNull(NodeStore.getType(cable));
     }
 
     /**

@@ -129,6 +129,19 @@ public enum DeviceType {
     }
 
     /**
+     * @return true if the network loop works this device every cycle (used by the per-chunk
+     *         counters of the node store) / true si el bucle de la red trabaja este dispositivo
+     *         en cada ciclo (lo usan los contadores por chunk del almacén de nodos)
+     */
+    public boolean isTicking() {
+        return switch (this) {
+            case MVN_GRABBER, MVN_GRABBER_HT, MVN_PUSHER, MVN_PUSHER_HT, MVN_GREEDY_CELL, MVN_VACUUM,
+                 MVN_PURGER, MVN_RECEIVER, MVN_TRANSMITTER, MVN_CRAFTER -> true;
+            default -> false;
+        };
+    }
+
+    /**
      * @return true if device supports item filter configuration / true si soporta filtros de ítems
      */
     public boolean filterable() {

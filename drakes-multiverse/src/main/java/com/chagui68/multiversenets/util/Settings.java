@@ -44,6 +44,15 @@ public final class Settings {
     }
 
     /**
+     * EN: Seconds between background saves of the node region files.
+     *
+     * ES: Segundos entre guardados en segundo plano de los archivos de región de nodos.
+     */
+    public static int storageAutosaveSeconds() {
+        return cfg != null ? Math.max(5, cfg.getInt("storage.autosave-seconds", 30)) : 30;
+    }
+
+    /**
      * EN: Returns the maximum number of connected nodes allowed per network.
      *
      * ES: Devuelve el número máximo de nodos conectados permitidos por red.
