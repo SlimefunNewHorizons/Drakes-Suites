@@ -1,6 +1,7 @@
 package com.chagui68.multiversenets.compat;
 
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
@@ -37,6 +38,8 @@ import java.util.logging.Logger;
  * Por reflexión: Mantiene el plugin autónomo (standalone). Si Slimefun no está instalado, queda inactivo.
  */
 public final class SlimefunBridge {
+
+    private static final NamespacedKey SLIMEFUN_ITEM_ID = new NamespacedKey("slimefun", "slimefun_item");
 
     /**
      * Complete roots for legacy APIs. The Drakes Slimefun artifact relocates the legacy API under
@@ -157,16 +160,23 @@ public final class SlimefunBridge {
      * ES: Obtiene el ID de Slimefun del PersistentDataContainer de un ItemStack, o null si es vanilla.
      */
     public static String getId(ItemStack item) {
-        if (item == null || !item.hasItemMeta()) {
+        if (item == null || item.getType().isAir()) {
             return null;
         }
         var meta = item.getItemMeta();
+        if (meta == null) {
+            return null;
+        }
         var pdc = meta.getPersistentDataContainer();
+        String id = pdc.get(SLIMEFUN_ITEM_ID, org.bukkit.persistence.PersistentDataType.STRING);
+        if (id != null && !id.isBlank()) {
+            return id;
+        }
         for (org.bukkit.NamespacedKey key : pdc.getKeys()) {
             if ("slimefun_item".equalsIgnoreCase(key.getKey())) {
-                String id = pdc.get(key, org.bukkit.persistence.PersistentDataType.STRING);
-                if (id != null && !id.isBlank()) {
-                    return id;
+                String legacyId = pdc.get(key, org.bukkit.persistence.PersistentDataType.STRING);
+                if (legacyId != null && !legacyId.isBlank()) {
+                    return legacyId;
                 }
             }
         }

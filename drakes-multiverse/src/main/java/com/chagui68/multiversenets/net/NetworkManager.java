@@ -276,7 +276,7 @@ public class NetworkManager {
         }
 
         // 4) Vanilla standard item check
-        return candidate.getType() == filterTemplate.getType() && cdType == null && cdSf == null;
+        return candidate.getType() == filterTemplate.getType() && cdSf == null;
     }
 
     private static boolean matchesMaterialOrId(String entry, ItemStack candidate) {
@@ -294,7 +294,10 @@ public class NetworkManager {
         }
         Material mat = Material.matchMaterial(entry);
         if (mat != null) {
-            return candidate.getType() == mat && Items.typeOf(candidate) == null && !SlimefunBridge.isSlimefunItem(candidate);
+            if (candidate.getType() != mat || Items.typeOf(candidate) != null) {
+                return false;
+            }
+            return SlimefunBridge.getId(candidate) == null;
         }
         return false;
     }

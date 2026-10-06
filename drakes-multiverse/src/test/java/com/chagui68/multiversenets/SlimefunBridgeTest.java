@@ -1,6 +1,7 @@
 package com.chagui68.multiversenets;
 
 import com.chagui68.multiversenets.compat.SlimefunBridge;
+import org.mockbukkit.mockbukkit.MockBukkit;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,6 +35,22 @@ class SlimefunBridgeTest {
         assertNull(SlimefunBridge.idDe((org.bukkit.block.Block) null));
         assertNull(SlimefunBridge.idDe((org.bukkit.inventory.ItemStack) null));
         assertFalse(SlimefunBridge.esItemSlimefun(null));
+    }
+
+    @Test
+    void getIdPreservesLegacyNamespaceFallback() {
+        MockBukkit.mock();
+        try {
+            org.bukkit.inventory.ItemStack item = new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_INGOT);
+            var meta = item.getItemMeta();
+            meta.getPersistentDataContainer().set(new org.bukkit.NamespacedKey("legacy_slimefun", "slimefun_item"),
+                    org.bukkit.persistence.PersistentDataType.STRING, "LEGACY_STEEL_INGOT");
+            item.setItemMeta(meta);
+
+            assertEquals("LEGACY_STEEL_INGOT", SlimefunBridge.getId(item));
+        } finally {
+            MockBukkit.unmock();
+        }
     }
 
     @Test
