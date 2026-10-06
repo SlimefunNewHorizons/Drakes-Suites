@@ -119,6 +119,16 @@ public class NetworkTicker {
         return NodeStore.get(net.block(pos));
     }
 
+    /**
+     * La instancia viva del nodo ({@link NodeStore#canonical}), sin decodificar una copia. Solo
+     * para quien lee el blob sin mutarlo o, si muta, siempre reescribe con {@link NodeStore#put}:
+     * grabOnce y pushOnce. Decodificar el blob de cada grabber/pusher en cada ciclo era el coste
+     * dominante de MultiverseNets en el perfil spark del ticket #83.
+     */
+    private NodeBlob liveBlobOf(Network net, long pos) {
+        return NodeStore.canonical(net.block(pos));
+    }
+
     private void spark(Network net, long pos) {
         if (!net.crayon()) {
             return;
@@ -162,7 +172,7 @@ public class NetworkTicker {
      * lo lleno en medio), se suelta en el mundo. Al aire no se va nada.
      */
     private void grabOnce(Network net, long pos, int rate) {
-        NodeBlob blob = blobOf(net, pos);
+        NodeBlob blob = liveBlobOf(net, pos);
         if (blob == null) {
             return;
         }
@@ -219,7 +229,7 @@ public class NetworkTicker {
      * ES: Exporta ítems desde la red hacia los contenedores adyacentes.
      */
     private void pushOnce(Network net, long pos, int rate) {
-        NodeBlob blob = blobOf(net, pos);
+        NodeBlob blob = liveBlobOf(net, pos);
         if (blob == null) {
             return;
         }
