@@ -163,11 +163,8 @@ public final class SlimefunBridge {
         if (item == null || item.getType().isAir()) {
             return null;
         }
-        var meta = item.getItemMeta();
-        if (meta == null) {
-            return null;
-        }
-        var pdc = meta.getPersistentDataContainer();
+        // Read-only PDC view: no ItemMeta clone on the network hot path (#87).
+        var pdc = item.getPersistentDataContainer();
         String id = pdc.get(SLIMEFUN_ITEM_ID, org.bukkit.persistence.PersistentDataType.STRING);
         if (id != null && !id.isBlank()) {
             return id;
