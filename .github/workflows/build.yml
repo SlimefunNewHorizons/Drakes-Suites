@@ -14,15 +14,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Preparar Java 21
+      - name: Preparar Java 25 para la rama 26.x
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: '25'
           cache: maven
 
       - name: Compilar y Ejecutar Tests del Monorepo
-        run: mvn -B -ntp clean package
+        run: mvn -B -ntp -Ppurpur-26 clean package
 
       - name: Subir Artefactos JARs Compilados
         uses: actions/upload-artifact@v4
