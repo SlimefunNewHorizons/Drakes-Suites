@@ -247,7 +247,7 @@
             <dependency>
                 <groupId>com.github.drakescraft_labs</groupId>
                 <artifactId>EcoPower-drake</artifactId>
-                <version>1.20.6-Drake-SNAPSHOT</version>
+                <version>1.20.6-Universal-26.x-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.github.drakescraft_labs</groupId>
