@@ -53,6 +53,8 @@ public final class ProtectionGate {
 
     /** Resolves an owner-managed ProtectionStones cuboid; uncertainty denies activation. */
     public OwnedRegion ownedProtection(Location location, UUID owner) {
+        if (location == null || location.getWorld() == null) return null;
+        if (!location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4)) return null;
         if (protectionStoneLookup == null) return null;
         try {
             Object psRegion = protectionStoneLookup.invoke(null, location);
@@ -93,6 +95,10 @@ public final class ProtectionGate {
 
     /** Queries ProtectionStones first and WorldGuard second. Any integration failure denies use. */
     private boolean isProtected(Location location) {
+        if (location == null || location.getWorld() == null) return true;
+        if (!location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4)) {
+            return true; // Fail closed: unloaded chunks are assumed protected to avoid synchronous loading
+        }
         try {
             if (protectionStoneLookup != null && protectionStoneLookup.invoke(null, location) != null) return true;
             if (plugin.getServer().getPluginManager().getPlugin("WorldGuard") == null) return protectionStoneLookup == null;
