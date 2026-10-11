@@ -23,6 +23,11 @@ import java.util.UUID;
  */
 public class PortalGunItem {
 
+    /** Keys written by the standalone SFPortalGunsExtension (1.21.11), read so carried-over guns keep their pair and colors. */
+    static final NamespacedKey LEGACY_KEY_ID = new NamespacedKey("sfportalgunsextension", "unique_portals_id");
+    static final NamespacedKey LEGACY_KEY_COLOR_1 = new NamespacedKey("sfportalgunsextension", "portal_color_one");
+    static final NamespacedKey LEGACY_KEY_COLOR_2 = new NamespacedKey("sfportalgunsextension", "portal_color_two");
+
     private final Plugin plugin;
     private final NamespacedKey keyId;
     private final NamespacedKey keyColor1;
@@ -40,7 +45,10 @@ public class PortalGunItem {
         if (im == null) return UUID.randomUUID().toString();
         PersistentDataContainer pdc = im.getPersistentDataContainer();
         String id;
-        if (!pdc.has(keyId, PersistentDataType.STRING)) {
+        String legacy = pdc.get(LEGACY_KEY_ID, PersistentDataType.STRING);
+        if (!pdc.has(keyId, PersistentDataType.STRING) && legacy != null) {
+            id = legacy;
+        } else if (!pdc.has(keyId, PersistentDataType.STRING)) {
             id = UUID.randomUUID().toString();
             pdc.set(keyId, PersistentDataType.STRING, id);
             itemStack.setItemMeta(im);
@@ -55,7 +63,10 @@ public class PortalGunItem {
         if (im == null) return "0;150;255";
         PersistentDataContainer pdc = im.getPersistentDataContainer();
         String color;
-        if (!pdc.has(keyColor1, PersistentDataType.STRING)) {
+        String legacy = pdc.get(LEGACY_KEY_COLOR_1, PersistentDataType.STRING);
+        if (!pdc.has(keyColor1, PersistentDataType.STRING) && legacy != null) {
+            color = legacy;
+        } else if (!pdc.has(keyColor1, PersistentDataType.STRING)) {
             color = ((int) (Math.random() * 255)) + ";" + ((int) (Math.random() * 255)) + ";" + ((int) (Math.random() * 255));
             pdc.set(keyColor1, PersistentDataType.STRING, color);
             itemStack.setItemMeta(im);
@@ -70,7 +81,10 @@ public class PortalGunItem {
         if (im == null) return "255;150;0";
         PersistentDataContainer pdc = im.getPersistentDataContainer();
         String color;
-        if (!pdc.has(keyColor2, PersistentDataType.STRING)) {
+        String legacy = pdc.get(LEGACY_KEY_COLOR_2, PersistentDataType.STRING);
+        if (!pdc.has(keyColor2, PersistentDataType.STRING) && legacy != null) {
+            color = legacy;
+        } else if (!pdc.has(keyColor2, PersistentDataType.STRING)) {
             color = ((int) (Math.random() * 255)) + ";" + ((int) (Math.random() * 255)) + ";" + ((int) (Math.random() * 255));
             pdc.set(keyColor2, PersistentDataType.STRING, color);
             itemStack.setItemMeta(im);
