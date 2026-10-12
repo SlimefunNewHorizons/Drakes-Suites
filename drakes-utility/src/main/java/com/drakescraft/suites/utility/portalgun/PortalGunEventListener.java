@@ -22,6 +22,8 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,6 +32,7 @@ public class PortalGunEventListener implements Listener {
 
     public static final Map<String, List<PortalData>> portals = new ConcurrentHashMap<>();
     private final Set<UUID> doNotTeleport = Collections.synchronizedSet(new HashSet<>());
+    private static final Map<UUID, Long> portalCooldowns = new ConcurrentHashMap<>();
     private final Plugin plugin;
 
     public PortalGunEventListener(Plugin plugin) {
@@ -46,9 +49,18 @@ public class PortalGunEventListener implements Listener {
 
             String playerName = ball.getMetadata("portalgunball").get(0).asString();
             String pgId = ball.getMetadata("portalgunid").get(0).asString();
-            boolean isSecond = ball.getMetadata("is_second").get(0).asBoolean();
             Player p = Bukkit.getPlayer(playerName);
             if (p == null) {
+                return;
+            }
+            Location placement = e.getHitBlock().getLocation().clone().add(e.getHitBlockFace().getModX(), e.getHitBlockFace().getModY(), e.getHitBlockFace().getModZ());
+            if (!Slimefun.getProtectionManager().hasPermission(p, e.getHitBlock().getLocation(), Interaction.BREAK_BLOCK)
+                    || !Slimefun.getProtectionManager().hasPermission(p, placement, Interaction.PLACE_BLOCK)) {
+                p.sendMessage("§cYou cannot create a portal in this protected area.");
+                return;
+            }
+            if (!isPortalPlaceable(e.getHitBlock().getLocation(), e.getHitBlockFace())) {
+                p.sendMessage("§cCan't place a portal there.");
                 return;
             }
 
@@ -57,9 +69,10 @@ public class PortalGunEventListener implements Listener {
                 portalList.remove(0);
             }
 
+            boolean isSecond = !portalList.isEmpty() && !portalList.get(0).second;
+
             String colorStr = ball.getMetadata(isSecond ? "color_2" : "color_1").get(0).asString();
-            String[] rgb = colorStr.split(";");
-            Color color = Color.fromRGB(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2]));
+            Color color = parseColor(colorStr, isSecond ? Color.ORANGE : Color.AQUA);
 
             PortalData pd = new PortalData();
             pd.blockFace = e.getHitBlockFace();
@@ -129,6 +142,7 @@ public class PortalGunEventListener implements Listener {
     }
 
     private void teleportPlayerThroughPortal(Player p, Location currentLoc, PortalData origin, PortalData destination) {
+        if (!canTravel(p, currentLoc, destination.location)) return;
         doNotTeleport.add(p.getUniqueId());
         try {
             p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0f, 1.0f);
@@ -155,9 +169,7 @@ public class PortalGunEventListener implements Listener {
 
         p.teleport(targetLoc);
 
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            p.setVelocity(new Vector(0, 0.3, 0));
-        }, 1L);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> p.setVelocity(exitVelocity(destination.blockFace)), 1L);
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             doNotTeleport.remove(p.getUniqueId());
@@ -166,5 +178,49 @@ public class PortalGunEventListener implements Listener {
 
     public static void cleanup() {
         portals.clear();
+        portalCooldowns.clear();
+    }
+
+    static boolean canTravel(Player player, Location from, Location destination) {
+        long now = System.currentTimeMillis();
+        long remaining = 10_000L - (now - portalCooldowns.getOrDefault(player.getUniqueId(), 0L));
+        if (remaining > 0) {
+            player.sendMessage("§cPortal stabilizing: wait " + ((remaining + 999) / 1000) + " seconds.");
+            return false;
+        }
+        if (!Slimefun.getProtectionManager().hasPermission(player, from, Interaction.INTERACT_BLOCK)
+                || !Slimefun.getProtectionManager().hasPermission(player, destination, Interaction.INTERACT_BLOCK)) {
+            player.sendMessage("§cYou cannot use a portal across these protected regions.");
+            return false;
+        }
+        portalCooldowns.put(player.getUniqueId(), now);
+        return true;
+    }
+
+    private static boolean isPortalPlaceable(Location block, BlockFace face) {
+        Location target = block.clone().add(face.getModX(), face.getModY(), face.getModZ());
+        if (!target.getBlock().isPassable()) return false;
+        if (face == BlockFace.NORTH || face == BlockFace.SOUTH || face == BlockFace.EAST || face == BlockFace.WEST) {
+            if (!target.clone().add(0, 1, 0).getBlock().isPassable()) return false;
+        }
+        return portals.values().stream().flatMap(Collection::stream).noneMatch(portal -> portal.location.getWorld().equals(block.getWorld()) && portal.location.distanceSquared(block) < 4);
+    }
+
+    private static Color parseColor(String color, Color fallback) {
+        try {
+            String[] parts = color.split(";");
+            return parts.length == 3 ? Color.fromRGB(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2])) : fallback;
+        } catch (IllegalArgumentException ignored) { return fallback; }
+    }
+
+    private static Vector exitVelocity(BlockFace face) {
+        return switch (face) {
+            case DOWN -> new Vector(0, -0.3, 0);
+            case NORTH -> new Vector(0, 0, -0.3);
+            case SOUTH -> new Vector(0, 0, 0.3);
+            case EAST -> new Vector(0.3, 0, 0);
+            case WEST -> new Vector(-0.3, 0, 0);
+            default -> new Vector(0, 0.3, 0);
+        };
     }
 }

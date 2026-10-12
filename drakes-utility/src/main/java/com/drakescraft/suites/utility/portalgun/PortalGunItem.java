@@ -121,15 +121,18 @@ public class PortalGunItem {
         String color1 = getPortal1Color(item);
         String color2 = getPortal2Color(item);
 
-        Location loc = p.getEyeLocation();
+        Location loc = p.getEyeLocation().add(p.getEyeLocation().getDirection().multiply(0.4));
         Snowball snowball = (Snowball) p.getWorld().spawnEntity(loc, EntityType.SNOWBALL);
-        snowball.setVelocity(loc.getDirection().multiply(2.0));
+        snowball.setGravity(false);
+        snowball.setVelocity(loc.getDirection().multiply(4.0));
         snowball.setShooter(p);
         snowball.setMetadata("portalgunball", new FixedMetadataValue(plugin, p.getName()));
         snowball.setMetadata("portalgunid", new FixedMetadataValue(plugin, id));
         snowball.setMetadata("color_1", new FixedMetadataValue(plugin, color1));
         snowball.setMetadata("color_2", new FixedMetadataValue(plugin, color2));
         snowball.setMetadata("is_second", new FixedMetadataValue(plugin, p.isSneaking()));
+        snowball.setMetadata("portal_name", new FixedMetadataValue(plugin, PortalGunState.portalName(item)));
+        snowball.setMetadata("portal_tint", new FixedMetadataValue(plugin, PortalGunState.portalTint(item)));
 
         try {
             p.playSound(p.getLocation(), Sound.ENTITY_SHULKER_SHOOT, 1.0f, 1.2f);

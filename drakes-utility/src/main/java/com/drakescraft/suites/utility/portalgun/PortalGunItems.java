@@ -15,11 +15,15 @@ import java.util.*;
 public final class PortalGunItems {
 
     public static final String PORTAL_GUN = "PORTAL_GUN";
+    public static final String PORTAL_FLUID = "PORTAL_FLUID";
     public static final String GRAVITY_GUN = "GRAVITY_GUN";
 
     private static final Map<String, ItemStack> ITEMS = new HashMap<>();
 
     static {
+        register(PORTAL_FLUID, Material.SLIME_BALL,
+                "<gradient:#74ff73:#00b894><bold>Portal Fluid</bold></gradient>",
+                Arrays.asList("&7Refills a Portal Gun to 100 charge.", "", "&8» &fID: &e" + PORTAL_FLUID));
         register(PORTAL_GUN, Material.NETHERITE_HOE,
                 "<gradient:#00ffcc:#0077ff><bold>Portal Gun</bold></gradient>",
                 Arrays.asList(
