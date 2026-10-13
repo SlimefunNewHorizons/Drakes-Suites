@@ -1,22 +1,54 @@
 package com.drakescraft.suites.server;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class LiveServerYamlConfigSmokeTest {
 
-    private static final File BACKUP_DIR = new File("/home/jack/Documentos/Desarrollo/Repositorios/star-server-backup/drakescraft/plugins");
+    /**
+     * Resolucion del directorio de plugins en vivo. Se busca, en orden:
+     * 1) propiedad de sistema "drakes.live.plugins";
+     * 2) variable de entorno DRAKES_LIVE_PLUGINS;
+     * 3) la ruta que usa el respaldo de produccion en el VPS;
+     * 4) la ruta historica del portatil de Jack.
+     * Si ninguna existe se omiten los tests: dependen de un respaldo externo
+     * que no viaja en el repositorio ni en CI.
+     */
+    private static File resolveBackupDir() {
+        String candidates = System.getProperty("drakes.live.plugins")
+                + "," + System.getenv("DRAKES_LIVE_PLUGINS")
+                + "," + System.getProperty("user.home") + "/star-server-backup/drakescraft/plugins"
+                + ",/home/jack/Documentos/Desarrollo/Repositorios/star-server-backup/drakescraft/plugins";
+        for (String candidate : candidates.split(",")) {
+            String path = candidate.trim();
+            if (path.isEmpty() || "null".equals(path)) continue;
+            File dir = new File(path);
+            if (dir.isDirectory()) return dir;
+        }
+        return null;
+    }
+
+    private static File backupDir;
+
+    @BeforeEach
+    void requireLiveBackup() {
+        backupDir = resolveBackupDir();
+        Assumptions.assumeTrue(backupDir != null,
+                "No hay respaldo en vivo de plugins disponible (define -Ddrakes.live.plugins=<ruta> o DRAKES_LIVE_PLUGINS); test omitido");
+    }
 
     @Test
     @DisplayName("Smoke Test: Los 13 YAMLs en vivo de Odysseia/Star cargan y validan sin errores")
     void testLiveOdysseiaYamls() {
-        File odysseiaDir = new File(BACKUP_DIR, "Odysseia");
+        File odysseiaDir = new File(backupDir, "Odysseia");
         assertTrue(odysseiaDir.exists() && odysseiaDir.isDirectory(), "Directorio de Odysseia en vivo debe existir");
 
         String[] requiredYamls = {
@@ -50,17 +82,31 @@ class LiveServerYamlConfigSmokeTest {
     @Test
     @DisplayName("Smoke Test: Validacion estructural profunda de config.yml y daily-rewards.yml en vivo")
     void testOdysseiaConfigDeepIntegrity() {
-        File configFile = new File(BACKUP_DIR, "Odysseia/config.yml");
+        File configFile = new File(backupDir, "Odysseia/config.yml");
+        assertTrue(configFile.isFile(), "config.yml en vivo debe existir");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
 
-        // Verificar secciones clave de Odysseia/Star
-        assertNotNull(config.getConfigurationSection("modalities") != null || config.contains("settings") || config.contains("dragon"),
-                "config.yml debe contener las ramas maestras de configuracion");
+        // config.yml es el maestro de modulos de Odysseia/Star: debe seguir siendo un
+        // archivo amplio de secciones de raiz, no una plantilla vacia.
+        ConfigurationSection root = config.getConfigurationSection("");
+        assertNotNull(root, "config.yml debe parsear con una raiz de configuracion");
+        int secciones = root.getKeys(false).size();
+        assertTrue(secciones >= 40,
+                "config.yml debe conservar la red amplia de modulos (minimo 40 secciones raiz, halladas " + secciones + ")");
+        assertTrue(config.contains("modalidades"), "config.yml debe declarar la seccion de modalidades");
 
-        File rewardsFile = new File(BACKUP_DIR, "Odysseia/daily-rewards.yml");
+        File rewardsFile = new File(backupDir, "Odysseia/daily-rewards.yml");
+        assertTrue(rewardsFile.isFile(), "daily-rewards.yml en vivo debe existir");
         YamlConfiguration rewards = YamlConfiguration.loadConfiguration(rewardsFile);
-        assertNotNull(rewards.getConfigurationSection("rewards") != null || rewards.contains("days") || rewards.contains("streak"),
-                "daily-rewards.yml debe contener recompensas diarias estructuradas");
+        ConfigurationSection players = rewards.getConfigurationSection("players");
+        assertNotNull(players, "daily-rewards.yml debe contener la seccion players");
+        // Es un almacen de datos reales: cada registro debe traer streak y last.
+        for (String uuid : players.getKeys(false)) {
+            ConfigurationSection entry = players.getConfigurationSection(uuid);
+            assertNotNull(entry, "Cada registro de jugador debe ser una seccion");
+            assertTrue(entry.contains("streak"), "Cada registro de jugador debe traer streak");
+            assertTrue(entry.contains("last"), "Cada registro de jugador debe traer last");
+        }
     }
 
     @Test
@@ -78,7 +124,7 @@ class LiveServerYamlConfigSmokeTest {
         };
 
         for (String pluginName : complementaryPlugins) {
-            File pDir = new File(BACKUP_DIR, pluginName);
+            File pDir = new File(backupDir, pluginName);
             if (pDir.exists()) {
                 File[] ymls = pDir.listFiles((dir, name) -> name.endsWith(".yml"));
                 if (ymls != null) {

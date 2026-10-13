@@ -51,14 +51,8 @@
             <url>https://repo.purpurmc.org/snapshots</url>
         </repository>
         <repository>
-            <id>local-drakescraft-maven</id>
-            <url>file:///home/jack/Documentos/Desarrollo/Repositorios/drakescraft/maven-repo</url>
-            <releases><enabled>true</enabled></releases>
-            <snapshots><enabled>true</enabled></snapshots>
-        </repository>
-        <repository>
-            <id>drakescraft-labs-maven</id>
-            <url>https://drakescraft-labs.github.io/maven-repo/</url>
+            <id>drakescraft-maven</id>
+            <url>https://maven.drakescraft.cl</url>
             <releases><enabled>true</enabled></releases>
             <snapshots><enabled>true</enabled></snapshots>
         </repository>
