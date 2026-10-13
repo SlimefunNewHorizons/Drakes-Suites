@@ -129,6 +129,22 @@ public class NetworkTicker {
         return NodeStore.canonical(net.block(pos));
     }
 
+    /**
+     * EN: True when the device chunk is loaded. Every per-tick device path must bail out
+     * early here: {@link Network#block(long)} resolves via {@code World.getBlockAt}, which
+     * synchronously loads the chunk from disk mid-tick when it is not loaded (the same
+     * lag-spike class already guarded in {@link Network#scan}).
+     *
+     * ES: Verdadero si el chunk del dispositivo está cargado. Todas las rutas de tick por
+     * dispositivo deben salir aquí: {@link Network#block(long)} resuelve con
+     * {@code World.getBlockAt}, que carga el chunk de disco en pleno tick si no lo está
+     * (la misma clase de pico de lag ya blindada en {@link Network#scan}).
+     */
+    private static boolean chunkLoaded(Network net, long pos) {
+        World world = net.world();
+        return world != null && world.isChunkLoaded(PosUtil.unpackX(pos) >> 4, PosUtil.unpackZ(pos) >> 4);
+    }
+
     private void spark(Network net, long pos) {
         if (!net.crayon()) {
             return;
@@ -172,6 +188,9 @@ public class NetworkTicker {
      * lo lleno en medio), se suelta en el mundo. Al aire no se va nada.
      */
     private void grabOnce(Network net, long pos, int rate) {
+        if (!chunkLoaded(net, pos)) {
+            return;
+        }
         NodeBlob blob = liveBlobOf(net, pos);
         if (blob == null) {
             return;
@@ -229,6 +248,9 @@ public class NetworkTicker {
      * ES: Exporta ítems desde la red hacia los contenedores adyacentes.
      */
     private void pushOnce(Network net, long pos, int rate) {
+        if (!chunkLoaded(net, pos)) {
+            return;
+        }
         NodeBlob blob = liveBlobOf(net, pos);
         if (blob == null) {
             return;
@@ -278,6 +300,9 @@ public class NetworkTicker {
      * ES: Descarta ítems coincidentes del almacenamiento de la red. No hace nada si no hay filtros configurados.
      */
     private void purgeOnce(Network net, long pos, int rate) {
+        if (!chunkLoaded(net, pos)) {
+            return;
+        }
         NodeBlob blob = blobOf(net, pos);
         if (blob == null) {
             return;
@@ -306,6 +331,9 @@ public class NetworkTicker {
      * ES: Procesa una Greedy Cell: solicita su ítem a la red hasta llenarse y lo sirve a contenedores vecinos.
      */
     private void greedyTick(Network net, long pos) {
+        if (!chunkLoaded(net, pos)) {
+            return;
+        }
         Block block = net.block(pos);
         NodeBlob blob = NodeStore.get(block);
         if (blob == null) {
@@ -396,6 +424,9 @@ public class NetworkTicker {
      * ES: Puente inalámbrico: el Receptor extrae ítems filtrados de la red del Transmisor vinculado hacia la suya.
      */
     private void bridgeOnce(Network net, long pos, int rate) {
+        if (!chunkLoaded(net, pos)) {
+            return;
+        }
         NodeBlob blob = blobOf(net, pos);
         if (blob == null || blob.txWorld == null || blob.filterMaterials.isEmpty()) {
             return;
@@ -441,6 +472,9 @@ public class NetworkTicker {
     private void doVacuum(Network net) {
         double radius = Settings.vacuumRadius();
         net.forEach(DeviceType.MVN_VACUUM, (pos, type) -> {
+            if (!chunkLoaded(net, pos)) {
+                return;
+            }
             NodeBlob blob = blobOf(net, pos);
             if (blob == null) {
                 return;
@@ -479,6 +513,9 @@ public class NetworkTicker {
      */
     private void doCrafting(Network net) {
         net.forEach(DeviceType.MVN_CRAFTER, (pos, type) -> {
+            if (!chunkLoaded(net, pos)) {
+                return;
+            }
             NodeBlob blob = blobOf(net, pos);
             if (blob == null) {
                 return;
