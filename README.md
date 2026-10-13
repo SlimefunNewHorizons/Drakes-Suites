@@ -311,6 +311,14 @@ graph TD
 
 ## 📄 License & Intellectual Property
 
-Copyright © 2026 [**JackStar6677-1**](https://github.com/JackStar6677-1) · [**DrakesCraft Labs**](https://github.com/DrakesCraft-Labs). All Rights Reserved.
+This project is derived from **Slimefun 4** by **TheBusyBiscuit** and the Slimefun community, licensed under **GPL-3.0**. The Drakes-Suites monorepo consolidates 160+ plugins, and as a GPL-3.0 derivative, it must be distributed under the same GPL-3.0 license.
 
-This software is **Source-Available** for public inspection and technical audit. Redistribution, commercial repackaging, or unauthorized derivative distribution without explicit written permission from the author is strictly prohibited.
+**Upstream Attribution:** Slimefun is the original work of **TheBusyBiscuit** and the Slimefun community. Drakes-Suites is a consolidation and modernization effort led by JackStar6677-1 for the DrakesCraft ecosystem.
+
+**Modifications:** Modifications © 2026 DrakesCraft Labs contributors. Distributed under the same license as the original (GPL-3.0).
+
+**License:** This project is governed by the GNU General Public License v3.0 (GPL-3.0). See the `LICENSE` file for full terms.
+
+Third-party components used by this project (dependencies) remain under their own licenses; see `NOTICE.md` and `NOTICE-UPSTREAM.md`.
+
+This software is **Source-Available** for public inspection and technical audit. Redistribution, commercial repackaging, or unauthorized derivative distribution without compliance with GPL-3.0 is strictly prohibited.
