@@ -95,7 +95,7 @@ public class MobDropsModule extends AbstractSuiteModule implements Listener {
         if (meta != null) {
             CrossVersionAdapter.setDisplayName(meta, "<gradient:#ffaa00:#ff5500>" + formatName(rule.getSlimefunId()) + "</gradient>");
             CrossVersionAdapter.setLore(meta, Arrays.asList(
-                    "&7Botín obtenido de criaturas caídas.",
+                    "&7Loot recovered from fallen creatures.",
                     "&8» &fID: &e" + rule.getSlimefunId()
             ));
             SuiteItemPdcBridge.setSlimefunId(meta, rule.getSlimefunId());
