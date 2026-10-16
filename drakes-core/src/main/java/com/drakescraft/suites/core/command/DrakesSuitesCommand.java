@@ -29,7 +29,7 @@ public class DrakesSuitesCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!sender.hasPermission("drakes.suites.admin")) {
-            sender.sendMessage(ChatColor.RED + "No tienes permiso para gestionar las Mega-Suites de DrakesCraft.");
+            sender.sendMessage(ChatColor.RED + "You do not have permission to manage DrakesCraft Mega-Suites.");
             return true;
         }
 
@@ -45,14 +45,14 @@ public class DrakesSuitesCommand implements CommandExecutor, TabCompleter {
                 for (SuiteRegistry.SuiteRegistration reg : plugin.getSuiteRegistry().getAllSuites().values()) {
                     reg.manager().reloadAll();
                 }
-                sender.sendMessage(ChatColor.GREEN + "[Drakes-Suites] Todas las suites y módulos han sido recargados.");
+                sender.sendMessage(ChatColor.GREEN + "[Drakes-Suites] All suites and modules have been reloaded.");
                 return true;
             }
 
             String suiteId = args[1].toLowerCase();
             SuiteRegistry.SuiteRegistration reg = plugin.getSuiteRegistry().getSuite(suiteId);
             if (reg == null) {
-                sender.sendMessage(ChatColor.RED + "La suite '" + suiteId + "' no está registrada o activa.");
+                sender.sendMessage(ChatColor.RED + "Suite '" + suiteId + "' is not registered or active.");
                 return true;
             }
 
@@ -60,34 +60,34 @@ public class DrakesSuitesCommand implements CommandExecutor, TabCompleter {
                 String moduleId = args[2].toLowerCase();
                 boolean ok = reg.manager().reloadModule(moduleId);
                 if (ok) {
-                    sender.sendMessage(ChatColor.GREEN + "[Drakes-Suites] Módulo '" + moduleId + "' de la suite '" + suiteId + "' recargado exitosamente.");
+                    sender.sendMessage(ChatColor.GREEN + "[Drakes-Suites] Module '" + moduleId + "' from suite '" + suiteId + "' reloaded successfully.");
                 } else {
-                    sender.sendMessage(ChatColor.RED + "Módulo '" + moduleId + "' no encontrado en suite '" + suiteId + "'.");
+                    sender.sendMessage(ChatColor.RED + "Module '" + moduleId + "' was not found in suite '" + suiteId + "'.");
                 }
             } else {
                 reg.manager().reloadAll();
-                sender.sendMessage(ChatColor.GREEN + "[Drakes-Suites] Todos los módulos de la suite '" + suiteId + "' fueron recargados.");
+                sender.sendMessage(ChatColor.GREEN + "[Drakes-Suites] All modules in suite '" + suiteId + "' have been reloaded.");
             }
             return true;
         }
 
         sender.sendMessage(ChatColor.GOLD + "=== Drakes-Suites Master CLI ===");
-        sender.sendMessage(ChatColor.YELLOW + "/drakessuites status " + ChatColor.GRAY + "- Estado global del ecosistema y módulos");
-        sender.sendMessage(ChatColor.YELLOW + "/drakessuites reload [suite] [modulo] " + ChatColor.GRAY + "- Recarga en caliente");
+        sender.sendMessage(ChatColor.YELLOW + "/drakessuites status " + ChatColor.GRAY + "- Global suite and module status");
+        sender.sendMessage(ChatColor.YELLOW + "/drakessuites reload [suite] [module] " + ChatColor.GRAY + "- Hot reload");
         return true;
     }
 
     private void showStatus(CommandSender sender) {
         sender.sendMessage(ChatColor.DARK_AQUA + "══════════════════════════════════════════════════════");
-        sender.sendMessage(ChatColor.GOLD + "  🏛️ DRAKES-SUITES — CONSOLIDACIÓN DE LAS 8 MEGA-SUITES");
+        sender.sendMessage(ChatColor.GOLD + "  🏛️ DRAKES-SUITES — 8 MEGA-SUITE CONSOLIDATION");
         sender.sendMessage(ChatColor.DARK_AQUA + "══════════════════════════════════════════════════════");
 
         long currentTick = plugin.getTickerEngine() != null ? plugin.getTickerEngine().getCurrentTick() : 0;
-        sender.sendMessage(ChatColor.GRAY + "Motor de Ticking Centralizado: " + ChatColor.GREEN + "ACTIVO "
+        sender.sendMessage(ChatColor.GRAY + "Centralized Ticking Engine: " + ChatColor.GREEN + "ACTIVE "
                 + ChatColor.DARK_GRAY + "(Tick #" + currentTick + ")");
 
         Map<String, SuiteRegistry.SuiteRegistration> suites = plugin.getSuiteRegistry().getAllSuites();
-        sender.sendMessage(ChatColor.GRAY + "Suites Registradas: " + ChatColor.YELLOW + suites.size() + "/8");
+        sender.sendMessage(ChatColor.GRAY + "Registered Suites: " + ChatColor.YELLOW + suites.size() + "/8");
 
         for (Map.Entry<String, SuiteRegistry.SuiteRegistration> entry : suites.entrySet()) {
             SuiteRegistry.SuiteRegistration reg = entry.getValue();
@@ -97,13 +97,13 @@ public class DrakesSuitesCommand implements CommandExecutor, TabCompleter {
             sb.append(ChatColor.AQUA).append("✦ Suite [").append(reg.plugin().getName()).append("]: ");
 
             if (modules.isEmpty()) {
-                sb.append(ChatColor.DARK_GRAY).append("Sin submódulos registrados");
+                sb.append(ChatColor.DARK_GRAY).append("No submodules registered");
             } else {
                 int activeCount = 0;
                 for (SuiteModule mod : modules.values()) {
                     if (mod.isEnabled()) activeCount++;
                 }
-                sb.append(ChatColor.YELLOW).append(activeCount).append("/").append(modules.size()).append(" activos ");
+                sb.append(ChatColor.YELLOW).append(activeCount).append("/").append(modules.size()).append(" active ");
                 sb.append(ChatColor.DARK_GRAY).append("(");
                 int i = 0;
                 for (SuiteModule mod : modules.values()) {

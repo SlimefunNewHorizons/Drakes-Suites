@@ -6,7 +6,7 @@ slimefun:
     - "world_clasico"
     - "world_clasico_nether"
     - "world_clasico_the_end"
-  restriction-message: "<red>❌ La tecnología y magia de Slimefun está estrictamente deshabilitada en el Survival Clásico.</red>"
+  restriction-message: "<red>❌ Slimefun technology and magic are strictly disabled in Classic Survival.</red>"
 
 # 2. Command Modality Gate (Separación de comandos por modalidad)
 command-gate:
@@ -23,19 +23,19 @@ command-gate:
         - "/sfcalc"
         - "/slimehud"
         - "/bosswarp"
-      blocked-message: "<red>❌ El comando <yellow>{command}</yellow> no está disponible en la modalidad <white>Survival Clásico</white>.</red>"
+      blocked-message: "<red>❌ The command <yellow>{command}</yellow> is not available in <white>Classic Survival</white>.</red>"
     oneblock:
       world-patterns:
         - "^world_oneblock.*"
       blocked-commands:
         - "/is"
-      blocked-message: "<red>❌ En OneBlock utiliza <yellow>/ob</yellow> en lugar de <yellow>/is</yellow>.</red>"
+      blocked-message: "<red>❌ In OneBlock, use <yellow>/ob</yellow> instead of <yellow>/is</yellow>.</red>"
     skyblock:
       world-patterns:
         - "^world_skyblock.*"
       blocked-commands:
         - "/ob"
-      blocked-message: "<red>❌ En SkyBlock utiliza <yellow>/is</yellow> en lugar de <yellow>/ob</yellow>.</red>"
+      blocked-message: "<red>❌ In SkyBlock, use <yellow>/is</yellow> instead of <yellow>/ob</yellow>.</red>"
     laboratorio:
       world-patterns:
         - "^laboratorio.*"
@@ -73,7 +73,7 @@ command-gate:
         - "/warp minas"
         - "/sf cheat"
         - "/sf give"
-      blocked-message: "<red>✦ Star Guard ✦</red> <gray>El comando <yellow>{command}</yellow> está bloqueado en <gold>Laboratorio</gold> para prevenir fugas de economía.</gray>"
+      blocked-message: "<red>✦ Star Guard ✦</red> <gray>The command <yellow>{command}</yellow> is blocked in <gold>Laboratory</gold> to prevent economy leaks.</gray>"
 
 # 3. Límites de Generación de Mundo (Chunky & Bedrock Guard)
 world-limits:

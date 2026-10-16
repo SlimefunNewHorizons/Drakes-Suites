@@ -16,7 +16,7 @@ import java.util.Set;
 public class SlimefunWorldFilter {
 
     private final Set<String> disabledWorlds = new HashSet<>();
-    private String restrictionMessage = "<red>❌ La tecnología y magia de Slimefun está estrictamente deshabilitada en esta modalidad.</red>";
+    private String restrictionMessage = "<red>❌ Slimefun technology and magic are strictly disabled in this game mode.</red>";
 
     public SlimefunWorldFilter() {
     }
