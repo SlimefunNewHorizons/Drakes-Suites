@@ -34,11 +34,11 @@ public class DiscRegistry {
         if (meta != null) {
             SuiteItemPdcBridge.setSlimefunId(meta, track.id());
 
-            CrossVersionAdapter.setDisplayName(meta, "§bDisco Musical: §f" + track.title());
+            CrossVersionAdapter.setDisplayName(meta, "§bMusic Disc: §f" + track.title());
 
             List<String> lore = new ArrayList<>();
-            lore.add("§7Artista: §e" + track.artist());
-            lore.add("§7Duración: §f" + (track.durationSeconds() / 60) + ":" + String.format("%02d", track.durationSeconds() % 60));
+            lore.add("§7Artist: §e" + track.artist());
+            lore.add("§7Duration: §f" + (track.durationSeconds() / 60) + ":" + String.format("%02d", track.durationSeconds() % 60));
             lore.add("");
             lore.add("§8[StarSuites · SlimefunDisc]");
             CrossVersionAdapter.setLore(meta, lore);

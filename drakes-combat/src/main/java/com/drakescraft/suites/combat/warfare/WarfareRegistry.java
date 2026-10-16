@@ -104,7 +104,7 @@ public class WarfareRegistry {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName("§b⚡ Hoja de Energía Cuántica");
+            meta.setDisplayName("§b⚡ Quantum Energy Blade");
             meta.getPersistentDataContainer().set(SuiteItemPdcBridge.SLIMEFUN_ITEM_KEY, PersistentDataType.STRING, "ENERGY_BLADE");
             item.setItemMeta(meta);
         }
@@ -115,7 +115,7 @@ public class WarfareRegistry {
         ItemStack item = new ItemStack(Material.IRON_NUGGET, Math.max(1, amount));
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName("§7Proyectil Balístico Cal. 50");
+            meta.setDisplayName("§7.50 Caliber Ballistic Round");
             meta.getPersistentDataContainer().set(SuiteItemPdcBridge.SLIMEFUN_ITEM_KEY, PersistentDataType.STRING, "BULLET");
             item.setItemMeta(meta);
         }

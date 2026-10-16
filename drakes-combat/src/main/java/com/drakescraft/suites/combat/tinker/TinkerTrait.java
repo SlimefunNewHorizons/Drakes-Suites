@@ -4,15 +4,15 @@ package com.drakescraft.suites.combat.tinker;
  * Rasgos y afinidades elementales aplicables a armas y herramientas de SlimeTinker.
  */
 public enum TinkerTrait {
-    LIFESTEAL("Robo de Vida", 0.15, "Restaura un porcentaje del daño infligido"),
-    LIGHTNING_STRIKE("Descarga Celestial", 0.25, "Invoca un rayo al golpear"),
-    VOID_EDGE("Filo del Vacío", 0.20, "Ignora armaduras físicas convencionales"),
-    DIVINE_SLAYER("Asesino de Dioses", 0.35, "Incrementa daño contra entidades divinas de DrakesBosses"),
-    MOMENTUM("Inercia Cósmica", 0.10, "Aumenta la velocidad de ataque por cada golpe consecutivo"),
-    REINFORCED("Reforzado Primordial", 0.30, "Probabilidad de no consumir durabilidad"),
-    COSMIC_DECAY("Desintegración Cósmica", 0.40, "Aplica daño sostenido irreducible"),
-    SINGULARITY_INFUSED("Singularidad Infundida", 0.50, "Aplica daño verdadero masivo consumiendo densidad cuántica"),
-    PRIMORDIAL_WRATH("Ira Primordial", 0.60, "Quiebra invulnerabilidades infinitas y absorbe esencias divinas de Tier 10");
+    LIFESTEAL("Lifesteal", 0.15, "Restores a percentage of inflicted damage"),
+    LIGHTNING_STRIKE("Celestial Strike", 0.25, "Summons lightning on hit"),
+    VOID_EDGE("Void Edge", 0.20, "Ignores conventional physical armor"),
+    DIVINE_SLAYER("Divine Slayer", 0.35, "Increases damage against DrakesBosses divine entities"),
+    MOMENTUM("Cosmic Momentum", 0.10, "Increases attack speed with each consecutive strike"),
+    REINFORCED("Primordial Reinforcement", 0.30, "Chance to avoid consuming durability"),
+    COSMIC_DECAY("Cosmic Decay", 0.40, "Applies irreducible damage over time"),
+    SINGULARITY_INFUSED("Singularity Infused", 0.50, "Applies massive true damage while consuming quantum density"),
+    PRIMORDIAL_WRATH("Primordial Wrath", 0.60, "Breaks infinite invulnerability and absorbs Tier 10 divine essences");
 
     private final String displayName;
     private final double baseFactor;

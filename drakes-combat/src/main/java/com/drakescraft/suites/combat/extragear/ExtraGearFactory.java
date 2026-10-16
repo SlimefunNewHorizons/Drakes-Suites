@@ -18,11 +18,11 @@ import java.util.Map;
 public final class ExtraGearFactory {
 
     public enum GearType {
-        SWORD(Material.IRON_SWORD, "SWORD", "Espada / Sword"),
-        HELMET(Material.IRON_HELMET, "HELMET", "Casco / Helmet"),
-        CHESTPLATE(Material.IRON_CHESTPLATE, "CHESTPLATE", "Pechera / Chestplate"),
-        LEGGINGS(Material.IRON_LEGGINGS, "LEGGINGS", "Grebas / Leggings"),
-        BOOTS(Material.IRON_BOOTS, "BOOTS", "Botas / Boots");
+        SWORD(Material.IRON_SWORD, "SWORD", "Sword"),
+        HELMET(Material.IRON_HELMET, "HELMET", "Helmet"),
+        CHESTPLATE(Material.IRON_CHESTPLATE, "CHESTPLATE", "Chestplate"),
+        LEGGINGS(Material.IRON_LEGGINGS, "LEGGINGS", "Leggings"),
+        BOOTS(Material.IRON_BOOTS, "BOOTS", "Boots");
 
         private final Material vanillaMaterial;
         private final String suffix;
@@ -60,11 +60,11 @@ public final class ExtraGearFactory {
             String sfId = getSlimefunId(material, type);
             SuiteItemPdcBridge.setSlimefunId(meta, sfId);
 
-            String displayName = material.getColorCode() + type.getTranslatedType() + " de " + material.getDisplayName();
+            String displayName = material.getColorCode() + material.getDisplayName() + " " + type.getTranslatedType();
             CrossVersionAdapter.setDisplayName(meta, displayName);
 
             List<String> lore = new ArrayList<>();
-            lore.add("§7Aleación de alta resistencia forjada en Slimefun");
+            lore.add("§7High-resistance alloy forged in Slimefun");
             lore.add("§8[StarSuites · ExtraGear]");
             CrossVersionAdapter.setLore(meta, lore);
 
