@@ -1,7 +1,7 @@
 enabled: true
 
 gui:
-  title: "<gradient:#e53935:#d32f2f><bold>Papelera de Reciclaje</bold></gradient> <dark_gray>(Cierra para destruir)</dark_gray>"
+  title: "<gradient:#e53935:#d32f2f><bold>Recycling Bin</bold></gradient> <dark_gray>(Close to destroy)</dark_gray>"
   rows: 4 # 36 slots
 
 sounds:
@@ -9,6 +9,6 @@ sounds:
   destroy: true
 
 messages:
-  no-permission: "<red>No tienes permiso para usar la papelera.</red>"
-  destroyed: "<gray>[<gradient:#e53935:#d32f2f>Papelera</gradient>] <red>{count}</red> <gray>objeto(s) destruido(s) definitivamente.</gray>"
-  only-players: "<red>Solo los jugadores en línea pueden abrir la papelera.</red>"
+  no-permission: "<red>You do not have permission to use the recycling bin.</red>"
+  destroyed: "<gray>[<gradient:#e53935:#d32f2f>Recycling Bin</gradient>] <red>{count}</red> <gray>item(s) permanently destroyed.</gray>"
+  only-players: "<red>Only online players can open the recycling bin.</red>"

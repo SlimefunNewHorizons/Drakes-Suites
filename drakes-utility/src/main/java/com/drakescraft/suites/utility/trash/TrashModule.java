@@ -53,12 +53,12 @@ public class TrashModule extends AbstractSuiteModule implements Listener, Comman
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
-            CrossVersionAdapter.sendMessage(sender, config.getString("messages.only-players", "<red>Solo los jugadores en línea pueden abrir la papelera.</red>"));
+            CrossVersionAdapter.sendMessage(sender, config.getString("messages.only-players", "<red>Only online players can open the recycling bin.</red>"));
             return true;
         }
 
         if (!player.hasPermission(PERMISSION_USE)) {
-            CrossVersionAdapter.sendMessage(player, config.getString("messages.no-permission", "<red>No tienes permiso para usar la papelera.</red>"));
+            CrossVersionAdapter.sendMessage(player, config.getString("messages.no-permission", "<red>You do not have permission to use the recycling bin.</red>"));
             return true;
         }
 
@@ -67,7 +67,7 @@ public class TrashModule extends AbstractSuiteModule implements Listener, Comman
         if (rows > 6) rows = 6;
         int size = rows * 9;
 
-        String title = config.getString("gui.title", "<gradient:#e53935:#d32f2f><bold>Papelera de Reciclaje</bold></gradient> <dark_gray>(Cierra para destruir)</dark_gray>");
+        String title = config.getString("gui.title", "<gradient:#e53935:#d32f2f><bold>Recycling Bin</bold></gradient> <dark_gray>(Close to destroy)</dark_gray>");
 
         TrashHolder holder = new TrashHolder();
         Inventory inv = Bukkit.createInventory(holder, size, CrossVersionAdapter.parseComponent(title));
@@ -103,7 +103,7 @@ public class TrashModule extends AbstractSuiteModule implements Listener, Comman
                 player.playSound(player.getLocation(), Sound.BLOCK_LAVA_EXTINGUISH, 0.6f, 1.4f);
             }
 
-            String msg = config.getString("messages.destroyed", "<gray>[<gradient:#e53935:#d32f2f>Papelera</gradient>] <red>{count}</red> <gray>objeto(s) destruido(s) definitivamente.</gray>")
+            String msg = config.getString("messages.destroyed", "<gray>[<gradient:#e53935:#d32f2f>Recycling Bin</gradient>] <red>{count}</red> <gray>item(s) permanently destroyed.</gray>")
                     .replace("{count}", String.valueOf(totalCount));
             CrossVersionAdapter.sendActionBar(player, msg);
             logInfo("Jugador " + player.getName() + " destruyó " + totalCount + " items en la papelera virtual.");

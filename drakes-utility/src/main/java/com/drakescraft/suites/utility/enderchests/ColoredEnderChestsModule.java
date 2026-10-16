@@ -48,8 +48,8 @@ public class ColoredEnderChestsModule extends AbstractSuiteModule implements Lis
     private static final String KEY_IS_PRIVATE = "enderchest_private";
 
     private static final String[] COLOR_NAMES = {
-            "Blanco", "Naranja", "Magenta", "Celeste", "Amarillo", "Lima", "Rosa", "Gris Oscuro",
-            "Gris Claro", "Cian", "Púrpura", "Azul", "Marrón", "Verde", "Rojo", "Negro"
+            "White", "Orange", "Magenta", "Light Blue", "Yellow", "Lime", "Pink", "Dark Gray",
+            "Light Gray", "Cyan", "Purple", "Blue", "Brown", "Green", "Red", "Black"
     };
 
     private final Map<String, ItemStack[]> frequencyStorage = new ConcurrentHashMap<>();
@@ -97,13 +97,13 @@ public class ColoredEnderChestsModule extends AbstractSuiteModule implements Lis
         ItemStack item = new ItemStack(Material.ENDER_CHEST);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            String title = "<yellow>Cofre de Ender Coloreado <gray>(" + (big ? "Grande - 54" : "Pequeño - 27") + ")</gray></yellow>";
+            String title = "<yellow>Colored Ender Chest <gray>(" + (big ? "Large - 54" : "Small - 27") + ")</gray></yellow>";
             CrossVersionAdapter.setItemName(meta, title);
             List<String> lore = List.of(
-                    "<gray>Frecuencia: <gold>#" + c1 + "-" + c2 + "-" + c3 + "</gold></gray>",
-                    "<dark_gray>• Canal 1: " + COLOR_NAMES[c1] + "</dark_gray>",
-                    "<dark_gray>• Canal 2: " + COLOR_NAMES[c2] + "</dark_gray>",
-                    "<dark_gray>• Canal 3: " + COLOR_NAMES[c3] + "</dark_gray>",
+                    "<gray>Frequency: <gold>#" + c1 + "-" + c2 + "-" + c3 + "</gold></gray>",
+                    "<dark_gray>• Channel 1: " + COLOR_NAMES[c1] + "</dark_gray>",
+                    "<dark_gray>• Channel 2: " + COLOR_NAMES[c2] + "</dark_gray>",
+                    "<dark_gray>• Channel 3: " + COLOR_NAMES[c3] + "</dark_gray>",
                     "<dark_purple>★ StarSuites Utility ★</dark_purple>"
             );
             CrossVersionAdapter.setItemLore(meta, lore);
@@ -191,7 +191,7 @@ public class ColoredEnderChestsModule extends AbstractSuiteModule implements Lis
         // Anti-dupe check de stack y PDC
         if (!SuiteItemPdcBridge.validateItemIntegrity(item, player.getName(), player.getLocation().toString())) {
             event.setCancelled(true);
-            CrossVersionAdapter.sendMessage(player, "<red>§l[Anti-Dupe] §cEste cofre de ender contiene metadatos corruptos. Bloqueado.");
+            CrossVersionAdapter.sendMessage(player, "<red>§l[Anti-Dupe] §cThis ender chest has corrupted metadata. Access blocked.");
             return;
         }
 
@@ -247,13 +247,13 @@ public class ColoredEnderChestsModule extends AbstractSuiteModule implements Lis
                 ItemMeta meta = item.getItemMeta();
                 if (meta != null) {
                     List<String> lore = meta.hasLore() ? new ArrayList<>(meta.getLore()) : new ArrayList<>();
-                    lore.add("<aqua>★ Bloqueado a: <yellow>" + player.getName() + "</yellow> ★</aqua>");
+                    lore.add("<aqua>★ Locked to: <yellow>" + player.getName() + "</yellow> ★</aqua>");
                     CrossVersionAdapter.setItemLore(meta, lore);
                     item.setItemMeta(meta);
                 }
 
-                CrossVersionAdapter.sendMessage(player, "<aqua>§l[ColoredEnderChests] §a¡Cofre asegurado en modo PRIVADO con Diamante!</aqua>");
-                CrossVersionAdapter.sendMessage(player, "<gray>Solo tú puedes acceder a esta frecuencia privada. Agáchate con un diamante para devolverlo a público.</gray>");
+                CrossVersionAdapter.sendMessage(player, "<aqua>§l[ColoredEnderChests] §aChest secured in PRIVATE mode with a Diamond!");
+                CrossVersionAdapter.sendMessage(player, "<gray>Only you can access this private frequency. Sneak with a diamond to make it public again.</gray>");
                 try {
                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.8f);
                 } catch (Throwable ignored) {}
@@ -269,7 +269,7 @@ public class ColoredEnderChestsModule extends AbstractSuiteModule implements Lis
                         ItemMeta meta = item.getItemMeta();
                         if (meta != null && meta.hasLore()) {
                             List<String> lore = new ArrayList<>(meta.getLore());
-                            lore.removeIf(l -> l.contains("Bloqueado a:"));
+                            lore.removeIf(l -> l.contains("Locked to:") || l.contains("Bloqueado a:"));
                             CrossVersionAdapter.setItemLore(meta, lore);
                             item.setItemMeta(meta);
                         }
@@ -279,17 +279,17 @@ public class ColoredEnderChestsModule extends AbstractSuiteModule implements Lis
                                     .forEach(rem -> player.getWorld().dropItemNaturally(player.getLocation(), rem));
                         }
 
-                        CrossVersionAdapter.sendMessage(player, "<aqua>§l[ColoredEnderChests] §eCofre restaurado a modo PÚBLICO. Diamante devuelto.</aqua>");
+                        CrossVersionAdapter.sendMessage(player, "<aqua>§l[ColoredEnderChests] §eChest restored to PUBLIC mode. Diamond returned.");
                         try {
                             player.playSound(player.getLocation(), Sound.BLOCK_CHEST_LOCKED, 1.0f, 1.0f);
                         } catch (Throwable ignored) {}
                         return;
                     } else {
-                        CrossVersionAdapter.sendMessage(player, "<aqua>§l[ColoredEnderChests] §eEste cofre ya es tu cofre privado. Agáchate con un diamante para desbloquearlo.</aqua>");
+                        CrossVersionAdapter.sendMessage(player, "<aqua>§l[ColoredEnderChests] §eThis chest is already private. Sneak with a diamond to unlock it.");
                         return;
                     }
                 } else {
-                    CrossVersionAdapter.sendMessage(player, "<red>§l[ColoredEnderChests] §cEste cofre es privado de otro jugador.");
+                    CrossVersionAdapter.sendMessage(player, "<red>§l[ColoredEnderChests] §cThis chest belongs to another player.");
                     try {
                         player.playSound(player.getLocation(), Sound.BLOCK_CHEST_LOCKED, 1.0f, 0.5f);
                     } catch (Throwable ignored) {}
@@ -311,7 +311,7 @@ public class ColoredEnderChestsModule extends AbstractSuiteModule implements Lis
 
     public void openEnderChest(Player player, World world, boolean big, int c1, int c2, int c3, UUID owner) {
         if (owner != null && !player.getUniqueId().equals(owner) && !player.hasPermission("drakesutility.enderchest.bypass")) {
-            CrossVersionAdapter.sendMessage(player, "<red>§l[ColoredEnderChests] §cEste cofre es privado de otro jugador.");
+            CrossVersionAdapter.sendMessage(player, "<red>§l[ColoredEnderChests] §cThis chest belongs to another player.");
             try {
                 player.playSound(player.getLocation(), Sound.BLOCK_CHEST_LOCKED, 1.0f, 0.5f);
             } catch (Throwable ignored) {}
@@ -322,7 +322,7 @@ public class ColoredEnderChestsModule extends AbstractSuiteModule implements Lis
         String freqKey = getFrequencyKey(modality, owner, big, c1, c2, c3);
         int slots = big ? 54 : 27;
 
-        String title = "<dark_purple>EnderChest <gold>#" + c1 + "-" + c2 + "-" + c3 + " <gray>(" + (big ? "Grande" : "Pequeño") + (owner != null ? " - Privado" : "") + ") [" + modality.toUpperCase(Locale.ROOT) + "]</gray></gold></dark_purple>";
+        String title = "<dark_purple>EnderChest <gold>#" + c1 + "-" + c2 + "-" + c3 + " <gray>(" + (big ? "Large" : "Small") + (owner != null ? " - Private" : "") + ") [" + modality.toUpperCase(Locale.ROOT) + "]</gray></gold></dark_purple>";
         Inventory inv = Bukkit.createInventory(null, slots, CrossVersionAdapter.parseComponent(title));
 
         ItemStack[] saved = frequencyStorage.get(freqKey);

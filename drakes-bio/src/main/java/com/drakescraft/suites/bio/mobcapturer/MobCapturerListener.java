@@ -50,7 +50,7 @@ public class MobCapturerListener implements Listener {
         // Verificar munición
         if (!consumePellet(player)) {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                    "&c[DrakesBio · MobCapturer] &7¡No tienes perdigones &b(Mob Capturing Pellet)&7 en tu inventario!"));
+                    "&c[DrakesBio · MobCapturer] &7You do not have any &bMob Capturing Pellets&7 in your inventory!"));
             player.playSound(player.getLocation(), Sound.BLOCK_DISPENSER_FAIL, 1.0f, 1.5f);
             return;
         }
@@ -83,7 +83,7 @@ public class MobCapturerListener implements Listener {
 
         if (!registry.canCapture(target)) {
             shooter.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                    "&c[DrakesBio · MobCapturer] &7Esta criatura es inmune a la captura bio-criogénica."));
+                    "&c[DrakesBio · MobCapturer] &7This creature is immune to bio-cryogenic capture."));
             shooter.playSound(shooter.getLocation(), Sound.BLOCK_ANVIL_LAND, 0.5f, 2.0f);
             return;
         }
@@ -96,8 +96,8 @@ public class MobCapturerListener implements Listener {
         shooter.playSound(shooter.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1.0f, 1.2f);
         shooter.playSound(shooter.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1.0f, 1.5f);
         shooter.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                "&a[DrakesBio · MobCapturer] &f¡Has capturado a un &e"
-                        + MobCapturerRegistry.humanize(target.getType().name()) + "&f con éxito!"));
+                "&a[DrakesBio · MobCapturer] &fYou successfully captured a &e"
+                        + MobCapturerRegistry.humanize(target.getType().name()) + "&f!"));
     }
 
     private boolean consumePellet(Player player) {
