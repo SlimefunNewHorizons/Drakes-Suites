@@ -68,8 +68,8 @@ public final class SMGGeneratorFactory {
             CrossVersionAdapter.setDisplayName(meta, "&9Generator Multiblock");
             CrossVersionAdapter.setLore(meta, Arrays.asList(
                     "&8StarSuites · DrakesGenerators",
-                    "&7Guía de montaje para generadores SMG.",
-                    "&7Solo expulsa al cofre superior directo.",
+                    "&7Assembly guide for SMG generators.",
+                    "&7Only outputs to the chest directly above.",
                     "",
                     "&ePlace chest directly above the generator."
             ));

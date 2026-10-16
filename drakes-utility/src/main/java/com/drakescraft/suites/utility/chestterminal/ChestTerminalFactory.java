@@ -82,13 +82,13 @@ public final class ChestTerminalFactory {
             rangeStr = "16 Bloques";
         } else if (range <= 64) {
             id = ID_WIRELESS_64;
-            rangeStr = "64 Bloques";
+            rangeStr = "64 Blocks";
         } else if (range <= 128) {
             id = ID_WIRELESS_128;
-            rangeStr = "128 Bloques";
+            rangeStr = "128 Blocks";
         } else {
             id = ID_WIRELESS_TRANSDIMENSIONAL;
-            rangeStr = "Ilimitado / Transdimensional";
+            rangeStr = "Unlimited / Transdimensional";
         }
 
         ItemMeta meta = item.getItemMeta();
@@ -96,11 +96,11 @@ public final class ChestTerminalFactory {
             CrossVersionAdapter.setDisplayName(meta, "&3CT Wireless Access Terminal &b(" + (range > 128 ? "Transdimensional" : range) + ")");
             CrossVersionAdapter.setLore(meta, Arrays.asList(
                     "&8StarSuites · DrakesUtility",
-                    "&8\u21E8 &7Rango: &e" + rangeStr,
-                    "&8\u21E8 &7Enlazado: &cSin vincular",
+                    "&8\u21E8 &7Range: &e" + rangeStr,
+                    "&8\u21E8 &7Linked: &cNot linked",
                     "",
-                    "&7Haz clic derecho en un Access Terminal",
-                    "&7para vincular la frecuencia cuántica.",
+                    "&7Right click an Access Terminal",
+                    "&7to link the quantum frequency.",
                     "&eRight click terminal to link."
             ));
             item.setItemMeta(meta);

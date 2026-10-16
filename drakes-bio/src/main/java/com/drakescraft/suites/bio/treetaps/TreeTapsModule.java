@@ -182,9 +182,9 @@ public class TreeTapsModule extends AbstractSuiteModule implements Listener {
             Location dropLoc = block.getRelative(face).getLocation().add(0.5, 0.5, 0.5);
             block.getWorld().dropItemNaturally(dropLoc, drop);
 
-            CrossVersionAdapter.sendActionBar(player, "<green>✔ Extracción exitosa de " + (isAmberScraper ? "Ámbar" : "Resina") + ".</green>");
+            CrossVersionAdapter.sendActionBar(player, "<green>✔ Successfully extracted " + (isAmberScraper ? "amber" : "resin") + ".</green>");
         } else {
-            CrossVersionAdapter.sendActionBar(player, "<gray>Corteza sin resina suficiente.</gray>");
+            CrossVersionAdapter.sendActionBar(player, "<gray>The bark does not contain enough resin.</gray>");
         }
 
         // Aplicar daño a la herramienta

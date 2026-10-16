@@ -64,8 +64,8 @@ public final class FlowerPowerItemsRegistry {
         for (CharmType charm : CharmType.values()) {
             register(charm.getSlimefunId(), createGlowingItem(Material.SUGAR, charm.getSlimefunId(),
                     charm.getFormattedName(),
-                    "Equípalo en la mano secundaria (offhand) para obtener su bonificación.",
-                    "Atributo: " + ChatColor.YELLOW + charm.getAttribute().getKey().getKey()));
+                    "Equip it in your offhand to gain its bonus.",
+                    "Attribute: " + ChatColor.YELLOW + charm.getAttribute().getKey().getKey()));
         }
 
         // Artefactos Supremos
