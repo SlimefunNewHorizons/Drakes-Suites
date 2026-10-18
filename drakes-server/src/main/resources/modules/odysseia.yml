@@ -11,3 +11,5 @@ logging:
 features:
   aura-evaluation-3d: true
   discord-srv-integration: true
+  void-safety: true
+  onechunk-loop: true
