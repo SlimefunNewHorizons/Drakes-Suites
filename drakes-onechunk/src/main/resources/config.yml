@@ -5,9 +5,9 @@ world: onechunk_world
 min-y: -64
 max-y: 319
 blocks-per-tick: 512
-regeneration-delay-ticks: 4
 
-# Each break advances this cycle. The source column always spans one 16x16 chunk.
+# This is the finite source column, not a respawning magic block. Each entry
+# describes a horizontal layer and repeats only while the column is generated.
 progression:
   - DEEPSLATE
   - STONE

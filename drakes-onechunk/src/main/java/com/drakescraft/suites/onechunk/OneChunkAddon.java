@@ -2,29 +2,26 @@ package com.drakescraft.suites.onechunk;
 
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.events.island.IslandCreatedEvent;
 import world.bentobox.bentobox.api.events.island.IslandResettedEvent;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
-import java.util.Map;
+import java.util.Set;
 
 public final class OneChunkAddon extends Addon implements Listener {
-    private final Map<ColumnKey, Long> progress = new HashMap<>();
+    private final Set<ColumnKey> generating = new HashSet<>();
     private boolean enabled;
     private String worldName;
     private int minY;
     private int maxY;
     private int blocksPerTick;
-    private int regenerationDelay;
     private ColumnProfile profile;
 
     @Override
@@ -46,7 +43,7 @@ public final class OneChunkAddon extends Addon implements Listener {
 
     @Override
     public void onDisable() {
-        progress.clear();
+        generating.clear();
     }
 
     private void reloadSettings() {
@@ -56,7 +53,6 @@ public final class OneChunkAddon extends Addon implements Listener {
         minY = config.getInt("min-y", -64);
         maxY = config.getInt("max-y", 319);
         blocksPerTick = Math.max(1, config.getInt("blocks-per-tick", 512));
-        regenerationDelay = Math.max(1, config.getInt("regeneration-delay-ticks", 4));
         profile = new ColumnProfile(config.getStringList("progression"));
         if (minY > maxY) {
             throw new IllegalStateException("min-y must not exceed max-y");
@@ -73,28 +69,12 @@ public final class OneChunkAddon extends Addon implements Listener {
         enqueueColumn(event.getLocation().getWorld(), event.getLocation().getChunk().getX(), event.getLocation().getChunk().getZ());
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onColumnBreak(BlockBreakEvent event) {
-        Block block = event.getBlock();
-        ColumnKey key = ColumnKey.of(block.getWorld(), block.getChunk().getX(), block.getChunk().getZ());
-        if (!enabled || !progress.containsKey(key) || block.getY() < minY || block.getY() > maxY) {
-            return;
-        }
-        long next = progress.merge(key, 1L, Long::sum);
-        Material replacement = material(profile.materialAt(next));
-        getServer().getScheduler().runTaskLater(getPlugin(), () -> {
-            if (block.getType().isAir()) {
-                block.setType(replacement, false);
-            }
-        }, regenerationDelay);
-    }
-
     private void enqueueColumn(World world, int chunkX, int chunkZ) {
         if (!enabled || world == null || !world.getName().equals(worldName)) {
             return;
         }
         ColumnKey key = ColumnKey.of(world, chunkX, chunkZ);
-        if (progress.putIfAbsent(key, 0L) != null) {
+        if (!generating.add(key)) {
             return;
         }
         new BukkitRunnable() {
@@ -110,6 +90,7 @@ public final class OneChunkAddon extends Addon implements Listener {
                     block.setType(material(profile.materialAt(index)), false);
                 }
                 if (index == total) {
+                    generating.remove(key);
                     cancel();
                 }
             }

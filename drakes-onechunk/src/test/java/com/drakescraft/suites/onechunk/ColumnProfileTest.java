@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ColumnProfileTest {
     @Test
-    void cyclesProgressionWithoutGrowingState() {
+    void repeatsConfiguredLayersAcrossTheFiniteColumn() {
         ColumnProfile profile = new ColumnProfile(List.of("STONE", "DIRT", "GRASS_BLOCK"));
         assertEquals("STONE", profile.materialAt(0));
         assertEquals("DIRT", profile.materialAt(1));
