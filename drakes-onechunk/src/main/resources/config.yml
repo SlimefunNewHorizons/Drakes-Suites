@@ -1,0 +1,17 @@
+# Off by default: enable only in the isolated Season 2 OneChunk world after a backup.
+enabled: false
+# Must match AOneBlock's configured world name in the isolated Season 2 instance.
+world: onechunk_world
+min-y: -64
+max-y: 319
+blocks-per-tick: 512
+regeneration-delay-ticks: 4
+
+# Each break advances this cycle. The source column always spans one 16x16 chunk.
+progression:
+  - DEEPSLATE
+  - STONE
+  - TUFF
+  - COBBLESTONE
+  - DIRT
+  - GRASS_BLOCK

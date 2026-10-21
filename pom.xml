@@ -22,6 +22,7 @@
         <module>drakes-combat</module>
         <module>drakes-server</module>
         <module>drakes-multiverse</module>
+        <module>drakes-onechunk</module>
     </modules>
 
     <properties>
@@ -66,6 +67,10 @@
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>bentoboxworld</id>
+            <url>https://repo.codemc.org/repository/bentoboxworld/</url>
         </repository>
     </repositories>
 

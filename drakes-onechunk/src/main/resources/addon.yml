@@ -1,0 +1,7 @@
+name: DrakesOneChunk
+main: com.drakescraft.suites.onechunk.OneChunkAddon
+version: '${project.version}'
+api-version: 3.17.0
+repository: SlimefunNewHorizons/Drakes-Suites
+authors: [JackStar6677-1]
+depend: [AOneBlock]
