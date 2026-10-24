@@ -35,37 +35,52 @@ class SuiteDatabaseEngineTest {
 
     @Test
     @DisplayName("Persistencia y lectura de estados de bloques en SQLite WAL")
-    void testBlockStatePersistence() throws InterruptedException {
+    void testBlockStatePersistence() {
         db.setBlockStateAsync("world", 100, 65, -200, "DrakesTech", "Networks", "NETWORKS_NODE", "{\"active\":true}");
-        
-        // Esperar ciclo de flush asincrono
-        Thread.sleep(600);
 
-        String state = db.getBlockState("world", 100, 65, -200);
+        String state = awaitValue(() -> db.getBlockState("world", 100, 65, -200));
         assertNotNull(state);
         assertTrue(state.contains("active"));
     }
 
     @Test
     @DisplayName("Persistencia de Quantum Storage y balances masivos")
-    void testQuantumStorage() throws InterruptedException {
+    void testQuantumStorage() {
         db.setQuantumStorageAsync("vault-alpha-1", "uuid-player-1", "INFINITY_SINGULARITY", 500000L, 10000000L);
 
-        Thread.sleep(600);
-
-        long amount = db.getQuantumStorageAmount("vault-alpha-1");
+        long amount = awaitValue(() -> db.getQuantumStorageAmount("vault-alpha-1"), 500000L);
         assertEquals(500000L, amount);
     }
 
     @Test
     @DisplayName("Persistencia de preferencias de jugador y key-value de modulo")
-    void testPlayerDataAndKeyValue() throws InterruptedException {
+    void testPlayerDataAndKeyValue() {
         db.setPlayerDataAsync("uuid-jack-star", "DrakesServer", "selected_title", "§6[Dios Creador]");
         db.setKeyValueAsync("DrakesTech", "EnergyNet", "global_tps_limit", "19.8");
 
-        Thread.sleep(600);
+        assertEquals("§6[Dios Creador]", awaitValue(() -> db.getPlayerData("uuid-jack-star", "DrakesServer", "selected_title")));
+        assertEquals("19.8", awaitValue(() -> db.getKeyValue("DrakesTech", "EnergyNet", "global_tps_limit")));
+    }
 
-        assertEquals("§6[Dios Creador]", db.getPlayerData("uuid-jack-star", "DrakesServer", "selected_title"));
-        assertEquals("19.8", db.getKeyValue("DrakesTech", "EnergyNet", "global_tps_limit"));
+    private static String awaitValue(java.util.function.Supplier<String> read) {
+        return awaitValue(read, null);
+    }
+
+    private static <T> T awaitValue(java.util.function.Supplier<T> read, T expected) {
+        long deadline = System.nanoTime() + java.util.concurrent.TimeUnit.SECONDS.toNanos(2);
+        T value;
+        do {
+            value = read.get();
+            if (expected == null ? value != null : expected.equals(value)) {
+                return value;
+            }
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException interrupted) {
+                Thread.currentThread().interrupt();
+                fail("Interrupcion esperando la persistencia asincrona", interrupted);
+            }
+        } while (System.nanoTime() < deadline);
+        return value;
     }
 }
