@@ -4,4 +4,4 @@ main: com.drakescraft.suites.server.DrakesServerPlugin
 api-version: '26.2'
 author: DrakesCraft-Labs
 description: "Mega-Suite de Servidor y Gameplay Standalone: Motor Odysseia, Economia y Social."
-depend: [DrakesCore]
+depend: [DrakesCore, Slimefun]

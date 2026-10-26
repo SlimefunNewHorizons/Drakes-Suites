@@ -28,7 +28,7 @@ public final class SuiteItemPdcBridge {
      * Retorna null si el item es nulo, aire o no posee la clave PDC.
      */
     public static String getSlimefunId(ItemStack item) {
-        if (item == null || item.getType().isAir()) {
+        if (item == null || item.getType().isAir() || !item.hasItemMeta()) {
             return null;
         }
         ItemMeta meta = item.getItemMeta();
@@ -36,9 +36,6 @@ public final class SuiteItemPdcBridge {
             return null;
         }
         PersistentDataContainer pdc = meta.getPersistentDataContainer();
-        if (!pdc.has(SLIMEFUN_ITEM_KEY, PersistentDataType.STRING)) {
-            return null;
-        }
         return pdc.get(SLIMEFUN_ITEM_KEY, PersistentDataType.STRING);
     }
 

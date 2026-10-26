@@ -4,7 +4,7 @@ main: com.drakescraft.suites.utility.DrakesUtilityPlugin
 api-version: '26.2'
 author: DrakesCraft-Labs
 description: Mega-Suite de Utilidades, Mochilas Tintadas, EnderChests, Papelera Virtual y Herramientas QoL.
-depend: [DrakesCore]
+depend: [DrakesCore, Slimefun]
 
 commands:
   trash:

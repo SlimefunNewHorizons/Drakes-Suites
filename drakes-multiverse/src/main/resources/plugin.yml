@@ -5,7 +5,8 @@ api-version: '${plugin.api.version}'
 author: Chagui68
 authors: [Chagui68, JackStar6677-1]
 description: Suite Multiverse oficial creada por Chagui68 (MultiverseCreatures y MultiverseNets).
-softdepend: [DrakesCore, DrakesCombat, DrakesTech, DrakesBosses, Slimefun]
+depend: [DrakesCore]
+softdepend: [DrakesCombat, DrakesTech, DrakesBosses, Slimefun]
 
 commands:
   mvnets:

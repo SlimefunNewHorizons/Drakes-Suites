@@ -1,4 +1,5 @@
 name: DrakesCore
+load: STARTUP
 version: '${project.version}'
 main: com.drakescraft.suites.core.DrakesCorePlugin
 api-version: '${plugin.api.version}'

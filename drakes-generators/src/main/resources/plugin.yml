@@ -4,4 +4,4 @@ main: com.drakescraft.suites.generators.DrakesGeneratorsPlugin
 api-version: '26.2'
 author: DrakesCraft-Labs
 description: Mega-Suite de Matriz Energetica, Reactores Nucleares/Solares y Generacion Cuantica.
-depend: [DrakesCore]
+depend: [DrakesCore, Slimefun]
