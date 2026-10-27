@@ -338,6 +338,29 @@ On the live production server (**Dallas**), four distinct tiers of software coex
 
 ---
 
+## 13. Operational Deployment & Monolithic Engine Integration
+
+StarSuites binaries (`drakes-*.jar`) are deployed alongside the sovereign **DrakesPurpur 26.2** kernel:
+
+### Build Artifacts Deployment
+Compile the complete suite reactor:
+```bash
+mvn clean package -DskipTests -T 1C
+```
+The resulting JARs are placed into the server's `plugins/` directory:
+* `drakes-core.jar` (Kernel, Dough-core, DB WAL, Spatial Ticker)
+* `drakes-tech.jar`, `drakes-bio.jar`, `drakes-magic.jar`, `drakes-generators.jar`
+* `drakes-utility.jar`, `drakes-combat.jar`, `drakes-server.jar`, `drakes-multiverse.jar`
+* Accompanied by the foundational `Slimefun.jar` runtime and `plugins/Slimefun/native/libslimefun_ffi.so`.
+
+### In-Game Management Commands
+* `/drakessuites`: Displays active suites, absorbed modules, and ticker metrics.
+* `/drakessuites reload <suite> [module]`: Hot-reloads configuration without restarting the server.
+* `/hardcoresf toggle` (or `/hsf`): Operator toggle for HardcoreSlimefun mechanics (disabled by default).
+* `/gw`: Operator inspection and toggle for GlobalWarming climate events (disabled by default).
+
+---
+
 <div align="center">
 
 **Designed and Built with Pride by JackStar (Jack) and the SRE Symmetric Triad**  
