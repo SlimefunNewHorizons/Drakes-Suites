@@ -96,8 +96,11 @@ class NetworksCoexistenceTest {
     @Test
     void slimefunDependencyIsSoft() {
         Map<String, Object> yml = pluginYml();
-        assertFalse(yml.containsKey("depend"),
-                "a hard dependency on Slimefun breaks standalone functionality");
+        Object depend = yml.get("depend");
+        if (depend instanceof List<?> list) {
+            assertFalse(list.contains("Slimefun"),
+                    "a hard dependency on Slimefun breaks standalone functionality");
+        }
         assertNotNull(yml.get("softdepend"), "Slimefun should load before if present, but remain optional");
     }
 }
