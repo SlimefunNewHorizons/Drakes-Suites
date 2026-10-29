@@ -42,7 +42,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.drakescraft_labs</groupId>
-            <artifactId>sefilib-drake</artifactId>
+            <artifactId>SefiLib</artifactId>
             <scope>compile</scope>
         </dependency>
         <dependency>
