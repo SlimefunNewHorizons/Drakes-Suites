@@ -2,7 +2,7 @@ name: DrakesUtility
 version: '${project.version}'
 main: com.drakescraft.suites.utility.DrakesUtilityPlugin
 api-version: '26.2'
-author: DrakesCraft-Labs
+author: SlimefunNewHorizons
 description: Mega-Suite de Utilidades, Mochilas Tintadas, EnderChests, Papelera Virtual y Herramientas QoL.
 depend: [DrakesCore, Slimefun]
 

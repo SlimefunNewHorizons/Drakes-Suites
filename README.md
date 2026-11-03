@@ -9,12 +9,12 @@
 ### Sovereign Suite Architecture Conceived by JackStar for Minecraft and Distributed Systems
 **Official Consolidation of 180+ Individual Plugins into High-Performance Autonomous Suites Ported to Purpur 26.2 (Next-Gen Sandbox 2026/2027)**
 
-[![Maven Build](https://img.shields.io/badge/Maven_Reactor-BUILD_SUCCESS-22C55E?style=for-the-badge&logo=apachemaven&logoColor=white)](https://github.com/DrakesCraft-Labs/Drakes-Suites)
+[![Maven Build](https://img.shields.io/badge/Maven_Reactor-BUILD_SUCCESS-22C55E?style=for-the-badge&logo=apachemaven&logoColor=white)](https://github.com/SlimefunNewHorizons/Drakes-Suites)
 [![Purpur 26.2](https://img.shields.io/badge/Purpur_API-26.2_NextGen-8B5CF6?style=for-the-badge&logo=purpur&logoColor=white)](https://purpurmc.org/)
 [![Java 25](https://img.shields.io/badge/Java-25_LTS-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://openjdk.org/)
 [![Rust Off-Heap](https://img.shields.io/badge/Rust_SIMD-Off--Heap_FFM-DEA584?style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org/)
 [![SQLite WAL](https://img.shields.io/badge/SQLite-WAL_Subsystem-06B6D4?style=for-the-badge&logo=sqlite&logoColor=white)](https://sqlite.org/)
-[![SRE Triad](https://img.shields.io/badge/SRE_Triad-Antigravity_Codex_Claude-F59E0B?style=for-the-badge)](https://github.com/DrakesCraft-Labs)
+[![SRE Triad](https://img.shields.io/badge/SRE_Triad-Antigravity_Codex_Claude-F59E0B?style=for-the-badge)](https://github.com/SlimefunNewHorizons)
 
 **[English](#)** | **[Leer en Espanol (README_ES.md)](./README_ES.md)**
 
@@ -32,7 +32,7 @@
 
 > ### Branch Status: `26.x` (Next-Generation Sandbox)
 > This branch implements the evolution of the StarSuites architecture towards the **Purpur 26.2** API (`api-version: 26.2`, Java 25 bytecode, modern Maven dependencies, and complete test suite validation).  
-> **Production Branch:** The rock-solid production release for the active season running in Dallas remains on [`main`](https://github.com/DrakesCraft-Labs/Drakes-Suites/tree/main) (Paper 1.21.11 LTS).
+> **Production Branch:** The rock-solid production release for the active season running in Dallas remains on [`main`](https://github.com/SlimefunNewHorizons/Drakes-Suites/tree/main) (Paper 1.21.11 LTS).
 
 ---
 
@@ -96,7 +96,7 @@ StarSuites is an integral part of the unified software architecture created and 
 3. **DrakesCraft:** Massively multiplayer production Minecraft network (hosted in Dallas, TX), player community, dynamic macroeconomic markets, and mythic boss pantheons.
 
 > **Canonical Upstream Attribution (Slimefun):**  
-> Slimefun is a monumental open-source project originally created by **TheBusyBiscuit** and maintained by its community. **JackStar is not the original creator of Slimefun**; JackStar assumed the role of modernizing rescue architect: solving critical performance collapses on Paper 1.21.11, eliminating 70+ duplicate async tickers, writing off-heap native Rust accelerators ([`Slimefun-Rust`](https://github.com/DrakesCraft-Labs/Slimefun-Rust)), and consolidating 180+ micro-repositories into the official Suites.  
+> Slimefun is a monumental open-source project originally created by **TheBusyBiscuit** and maintained by its community. **JackStar is not the original creator of Slimefun**; JackStar assumed the role of modernizing rescue architect: solving critical performance collapses on Paper 1.21.11, eliminating 70+ duplicate async tickers, writing off-heap native Rust accelerators ([`Slimefun-Rust`](https://github.com/SlimefunNewHorizons/Slimefun-Rust)), and consolidating 180+ micro-repositories into the official Suites.  
 > 
 > **Sovereign Attribution (Multiverse Suite):**  
 > The Multiverse Suite (`drakes-multiverse.jar`) is the sovereign intellectual creation of **Chagui68** (Chagui), encapsulating `MultiverseCreatures` and `MultiverseNets`.
@@ -298,7 +298,7 @@ On the live production server (**Dallas**), four distinct tiers of software coex
 1. **Mega-Suites StarSuites (Monorepo `Drakes-Suites`):**
    - Replaces 160+ individual JARs with the 8 official JARs (`drakes-core` through `drakes-server`) + `drakes-multiverse` by Chagui68.
    - **`drakes-server.jar` (Star Engine):** Canonical evolution of Odysseia to **Star**. Server core, Star telemetry, idempotent Tebex purchases (`purchases.db`), economic oversight (SII), and native Rust bridge.
-2. **Sovereign GitHub Organization Forks (`DrakesCraft-Labs` - Open Source):**
+2. **Sovereign GitHub Organization Forks (`SlimefunNewHorizons` - Open Source):**
    - **`BentoBox-Drake`**: Official sovereign island engine fork (BSkyBlock, OneBlock, CaveBlock, AcidIsland) with the critical Paper Data Components item fix in `ItemStackTypeAdapter`.
    - **`CrazyAuctions-Drake`**: Player auction house (`/ah`) with zero GUI dupe bugs.
    - **`DrakesSlimeMarket`**: Dynamic macro-economy (`/sm`) with 777 controlled offers and exponential moving average dampening.

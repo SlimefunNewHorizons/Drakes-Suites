@@ -3,7 +3,7 @@ load: STARTUP
 version: '${project.version}'
 main: com.drakescraft.suites.core.DrakesCorePlugin
 api-version: '${plugin.api.version}'
-author: DrakesCraft-Labs
+author: SlimefunNewHorizons
 description: "Kernel del Ecosistema DrakesCraft: Core Engine, API, Modular Loader y Ticker Centralizado."
 
 commands:

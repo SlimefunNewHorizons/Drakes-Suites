@@ -2,6 +2,6 @@ name: DrakesServer
 version: '${project.version}'
 main: com.drakescraft.suites.server.DrakesServerPlugin
 api-version: '26.2'
-author: DrakesCraft-Labs
+author: SlimefunNewHorizons
 description: "Mega-Suite de Servidor y Gameplay Standalone: Motor Odysseia, Economia y Social."
 depend: [DrakesCore, Slimefun]

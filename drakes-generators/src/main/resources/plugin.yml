@@ -2,6 +2,6 @@ name: DrakesGenerators
 version: '${project.version}'
 main: com.drakescraft.suites.generators.DrakesGeneratorsPlugin
 api-version: '26.2'
-author: DrakesCraft-Labs
+author: SlimefunNewHorizons
 description: Mega-Suite de Matriz Energetica, Reactores Nucleares/Solares y Generacion Cuantica.
 depend: [DrakesCore, Slimefun]

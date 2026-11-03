@@ -103,6 +103,6 @@ public class NanotechModule extends AbstractSuiteModule implements SlimefunAddon
 
     @Override
     public String getBugTrackerURL() {
-        return "https://github.com/DrakesCraft-Labs/Drakes-Suites/issues";
+        return "https://github.com/SlimefunNewHorizons/Drakes-Suites/issues";
     }
 }
