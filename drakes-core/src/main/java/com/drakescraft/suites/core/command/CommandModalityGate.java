@@ -43,14 +43,14 @@ public class CommandModalityGate implements Listener {
             if (blockedCommands != null) {
                 for (String cmd : blockedCommands) {
                     if (cmd != null && !cmd.trim().isEmpty()) {
-                        this.blockedCommands.add(normalizeCommandLabel(cmd));
+                        this.blockedCommands.add(normalizeCommandLine(cmd));
                     }
                 }
             }
             if (allowedCommands != null) {
                 for (String cmd : allowedCommands) {
                     if (cmd != null && !cmd.trim().isEmpty()) {
-                        this.allowedCommands.add(normalizeCommandLabel(cmd));
+                        this.allowedCommands.add(normalizeCommandLine(cmd));
                     }
                 }
             }
@@ -72,14 +72,13 @@ public class CommandModalityGate implements Listener {
             String trimmed = commandLine.trim();
             if (trimmed.isEmpty()) return false;
 
-            String[] parts = trimmed.split("\\s+");
-            String normalizedLabel = normalizeCommandLabel(parts[0]);
+            String normalizedLine = normalizeCommandLine(trimmed);
 
             // En modo lista blanca, TODO comando no permitido explícitamente se bloquea
             if (whitelistMode) {
                 boolean isAllowed = false;
                 for (String allowed : allowedCommands) {
-                    if (normalizedLabel.equalsIgnoreCase(allowed)) {
+                    if (matchesCommand(normalizedLine, allowed)) {
                         isAllowed = true;
                         break;
                     }
@@ -91,11 +90,23 @@ public class CommandModalityGate implements Listener {
 
             // Comprobación de lista negra (funciona con y sin prefijo de plugin)
             for (String blocked : blockedCommands) {
-                if (normalizedLabel.equalsIgnoreCase(blocked)) {
+                if (matchesCommand(normalizedLine, blocked)) {
                     return true;
                 }
             }
             return false;
+        }
+
+        private static boolean matchesCommand(String commandLine, String configuredCommand) {
+            return commandLine.equals(configuredCommand) || commandLine.startsWith(configuredCommand + " ");
+        }
+
+        private static String normalizeCommandLine(String commandLine) {
+            String[] parts = commandLine.trim().split("\\s+", 2);
+            String label = normalizeCommandLabel(parts[0]);
+            // Only the label has a plugin namespace; colons in arguments are literal.
+            return parts.length == 1 ? label
+                    : label + " " + parts[1].trim().replaceAll("\\s+", " ").toLowerCase(Locale.ROOT);
         }
 
         public static String normalizeCommandLabel(String token) {

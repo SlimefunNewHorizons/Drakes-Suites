@@ -6,6 +6,9 @@ slimefun:
     - "world_clasico"
     - "world_clasico_nether"
     - "world_clasico_the_end"
+    - "clasico"
+    - "clasico_nether"
+    - "clasico_the_end"
   restriction-message: "<red>❌ Slimefun technology and magic are strictly disabled in Classic Survival.</red>"
 
 # 2. Command Modality Gate (Separación de comandos por modalidad)
@@ -15,6 +18,7 @@ command-gate:
     clasico:
       world-patterns:
         - "^world_clasico.*"
+        - "^clasico(_nether|_the_end)?$"
       blocked-commands:
         - "/sf"
         - "/slimefun"
@@ -27,12 +31,14 @@ command-gate:
     oneblock:
       world-patterns:
         - "^world_oneblock.*"
+        - "^oneblock_world(_nether|_the_end)?$"
       blocked-commands:
         - "/is"
       blocked-message: "<red>❌ In OneBlock, use <yellow>/ob</yellow> instead of <yellow>/is</yellow>.</red>"
     skyblock:
       world-patterns:
         - "^world_skyblock.*"
+        - "^bskyblock_world(_nether|_the_end)?$"
       blocked-commands:
         - "/ob"
       blocked-message: "<red>❌ In SkyBlock, use <yellow>/is</yellow> instead of <yellow>/ob</yellow>.</red>"

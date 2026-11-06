@@ -13,6 +13,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;
 import org.mockbukkit.mockbukkit.entity.PlayerMock;
@@ -68,6 +70,13 @@ class SlimefunWorldFilterTest {
         server.getPluginManager().callEvent(event);
 
         assertTrue(event.isCancelled(), "Colocar máquina Slimefun en world_clasico debe ser cancelado");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"clasico", "clasico_nether", "clasico_the_end",
+            "world_clasico", "world_clasico_nether", "world_clasico_the_end"})
+    void testCurrentAndLegacyClassicDimensions(String worldName) {
+        assertFalse(filter.isSlimefunAllowed(worldName), worldName);
     }
 
     @Test

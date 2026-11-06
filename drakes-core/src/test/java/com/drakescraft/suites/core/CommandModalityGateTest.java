@@ -3,6 +3,8 @@ package com.drakescraft.suites.core;
 import com.drakescraft.suites.core.command.CommandModalityGate;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;
 import org.mockbukkit.mockbukkit.entity.PlayerMock;
@@ -52,6 +54,31 @@ class CommandModalityGateTest {
         server.getPluginManager().callEvent(event);
 
         assertFalse(event.isCancelled(), "Comando /sf debe estar permitido en world");
+    }
+
+    @ParameterizedTest
+    @CsvSource({"clasico,/sf", "clasico_nether,/slimefun:sf", "clasico_the_end,/sf guide",
+            "oneblock_world,/is", "oneblock_world_nether,/bskyblock:is",
+            "oneblock_world_the_end,/is", "bskyblock_world,/ob",
+            "bskyblock_world_nether,/oneblock:ob", "bskyblock_world_the_end,/ob"})
+    void testCurrentWorldNames(String worldName, String command) {
+        WorldMock world = server.addSimpleWorld(worldName);
+        PlayerMock player = server.addPlayer();
+        player.teleport(world.getSpawnLocation());
+        PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(player, command);
+        server.getPluginManager().callEvent(event);
+        assertTrue(event.isCancelled(), command + " in " + worldName);
+    }
+
+    @ParameterizedTest
+    @CsvSource({"/sf cheat STONE", "/slimefun:sf give DIAMOND"})
+    void testLaboratorySubcommandRestrictions(String command) {
+        WorldMock world = server.addSimpleWorld("laboratorio");
+        PlayerMock player = server.addPlayer();
+        player.teleport(world.getSpawnLocation());
+        PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(player, command);
+        server.getPluginManager().callEvent(event);
+        assertTrue(event.isCancelled(), command);
     }
 
     @Test

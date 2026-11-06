@@ -1,0 +1,6 @@
+name: CommandGateProbe
+version: '1.0'
+main: com.drakescraft.suites.core.probe.CommandGateProbe
+api-version: '26.2'
+depend: [DrakesCore]
+description: Disposable-server synthetic event probe; shuts down its server after checking.
