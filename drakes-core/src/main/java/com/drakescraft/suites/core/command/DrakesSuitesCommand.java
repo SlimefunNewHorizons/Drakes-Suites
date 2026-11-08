@@ -87,7 +87,7 @@ public class DrakesSuitesCommand implements CommandExecutor, TabCompleter {
                 + ChatColor.DARK_GRAY + "(Tick #" + currentTick + ")");
 
         Map<String, SuiteRegistry.SuiteRegistration> suites = plugin.getSuiteRegistry().getAllSuites();
-        sender.sendMessage(ChatColor.GRAY + "Registered Suites: " + ChatColor.YELLOW + suites.size() + "/8");
+        sender.sendMessage(ChatColor.GRAY + "Registered Suites: " + ChatColor.YELLOW + suites.size());
 
         for (Map.Entry<String, SuiteRegistry.SuiteRegistration> entry : suites.entrySet()) {
             SuiteRegistry.SuiteRegistration reg = entry.getValue();
