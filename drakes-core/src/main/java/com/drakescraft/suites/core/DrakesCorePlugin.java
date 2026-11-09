@@ -25,6 +25,7 @@ public class DrakesCorePlugin extends JavaPlugin {
     public void onEnable() {
         instance = this;
         saveDefaultConfig();
+        registerEconomyRouter();
 
         // 1. Inicializar base de datos centralizada SQLite WAL
         this.databaseEngine = new com.drakescraft.suites.core.database.SuiteDatabaseEngine(this);
@@ -123,5 +124,17 @@ public class DrakesCorePlugin extends JavaPlugin {
 
     public com.drakescraft.suites.core.command.CommandModalityGate getCommandGate() {
         return commandGate;
+    }
+
+    /** Router Vault: ver {@link com.drakescraft.suites.core.economy.EconomyRouter}. */
+    private void registerEconomyRouter() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return;
+        }
+        getServer().getServicesManager().register(net.milkbowl.vault.economy.Economy.class,
+                com.drakescraft.suites.core.economy.EconomyRouter.create(
+                        com.drakescraft.suites.core.economy.EconomyRouter.bukkitResolver(), getLogger()),
+                this, org.bukkit.plugin.ServicePriority.Highest);
+        getLogger().info("[Economy] Router Vault registrado (InvSwitcher > Essentials).");
     }
 }
