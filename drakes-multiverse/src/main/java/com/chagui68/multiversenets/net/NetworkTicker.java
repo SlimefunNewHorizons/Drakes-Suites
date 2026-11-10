@@ -8,7 +8,6 @@ import com.chagui68.multiversenets.craft.RecipeData;
 import com.chagui68.multiversenets.item.DeviceType;
 import com.chagui68.multiversenets.persist.NodeBlob;
 import com.chagui68.multiversenets.persist.NodeStore;
-import com.chagui68.multiversenets.util.PerfFlags;
 import com.chagui68.multiversenets.util.PosUtil;
 import com.chagui68.multiversenets.util.Settings;
 import com.chagui68.multiversenets.util.StackUtils;
@@ -72,7 +71,6 @@ public class NetworkTicker {
     }
 
     private void run() {
-        PerfFlags.refresh();
         scanIn -= 5;
         transferIn -= 5;
         vacuumIn -= 5;
@@ -203,7 +201,7 @@ public class NetworkTicker {
             Block target = self.getRelative(face);
             Material mat = target.getType();
 
-            if (isPotentialContainer(mat) && PerfFlags.holderOf(target) instanceof InventoryHolder holder) {
+            if (isPotentialContainer(mat) && target.getState() instanceof InventoryHolder holder) {
                 Inventory inv = holder.getInventory();
                 ItemStack extracted = NetworkManager.extractFirst(inv, pred, rate);
                 if (extracted == null) {
@@ -267,7 +265,7 @@ public class NetworkTicker {
             Block target = self.getRelative(face);
             Material mat = target.getType();
 
-            if (isPotentialContainer(mat) && PerfFlags.holderOf(target) instanceof InventoryHolder holder) {
+            if (isPotentialContainer(mat) && target.getState() instanceof InventoryHolder holder) {
                 int leftover = NetworkManager.insertInto(holder.getInventory(), stack);
                 if (leftover < stack.getAmount()) {
                     spark(net, pos);
@@ -375,7 +373,7 @@ public class NetworkTicker {
                 for (BlockFace face : facesFor(blob)) {
                     Block target = block.getRelative(face);
                     Material targetMat = target.getType();
-                    if (isPotentialContainer(targetMat) && PerfFlags.holderOf(target) instanceof InventoryHolder holder) {
+                    if (isPotentialContainer(targetMat) && target.getState() instanceof InventoryHolder holder) {
                         ItemStack out = sample.clone();
                         out.setAmount(want);
                         int leftover = NetworkManager.insertInto(holder.getInventory(), out);
