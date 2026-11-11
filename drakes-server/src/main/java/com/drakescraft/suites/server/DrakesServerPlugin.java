@@ -33,6 +33,7 @@ public class DrakesServerPlugin extends JavaPlugin {
         this.moduleManager.registerModule(new GenericSuiteModule(this, "brewery_menu", "BreweryMenu Interactive Beverage & Recipe UI"));
         this.moduleManager.registerModule(new GenericSuiteModule(this, "random_expansion", "RandomExpansion Dynamic Server Events & Procedural Loot"));
         this.moduleManager.registerModule(new GenericSuiteModule(this, "bump", "Bump System & Network Loyalty Telemetry"));
+        this.moduleManager.registerModule(new com.drakescraft.suites.server.cosmetics.PhantomArmorModule(this));
 
         this.moduleManager.enableAll();
 
