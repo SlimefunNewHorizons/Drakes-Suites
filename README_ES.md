@@ -33,6 +33,10 @@
 > ### Estado de la Rama: `26.x` (Sandbox de Proxima Generacion)
 > Esta rama implementa la evolucion de la arquitectura StarSuites hacia el stack **Purpur 26.2** (`api-version: 26.2`, bytecode Java 25, dependencias Maven actualizadas y compilacion exitosa con tests unitarios).  
 > **Aviso de Produccion:** La rama de produccion estable para la temporada en curso en Dallas permanece en [`main`](https://github.com/SlimefunNewHorizons/Drakes-Suites/tree/main) (Paper 1.21.11 LTS).
+>
+> 🛑 **ESTÁNDAR ARQUITECTÓNICO INVIOLABLE — CERO JARS DE ADDONS SUELTOS EN `/plugins`:**  
+> Bajo el modelo StarSuites, **la totalidad de los 180+ addons de Slimefun está unificada dentro de las 8 Mega-Suites (`drakes-core` a `drakes-server`) y `drakes-multiverse`**.  
+> **QUEDA TERMINANTEMENTE PROHIBIDO** copiar o desplegar JARs individuales de micro-addons (ej. `NetworksV6-*.jar`, `GeneticChickengineering-*.jar`, `DynaTech-*.jar`) en los directorios `/plugins/` o `/plugins/update/` del servidor. Toda corrección de bugs, rebalanceo o nueva función debe implementarse dentro de su módulo correspondiente en StarSuites y desplegarse única y exclusivamente como el artefacto JAR consolidado de la Mega-Suite completa.
 
 ---
 

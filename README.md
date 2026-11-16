@@ -33,6 +33,10 @@
 > ### Branch Status: `26.x` (Next-Generation Sandbox)
 > This branch implements the evolution of the StarSuites architecture towards the **Purpur 26.2** API (`api-version: 26.2`, Java 25 bytecode, modern Maven dependencies, and complete test suite validation).  
 > **Production Branch:** The rock-solid production release for the active season running in Dallas remains on [`main`](https://github.com/SlimefunNewHorizons/Drakes-Suites/tree/main) (Paper 1.21.11 LTS).
+>
+> 🛑 **MANDATORY ARCHITECTURAL STANDARD — NO STANDALONE ADDON JARS IN `/plugins`:**  
+> In the StarSuites paradigm, **all 180+ Slimefun addons are unified within the 8 Mega-Suites (`drakes-core` through `drakes-server`) and `drakes-multiverse`**.  
+> **IT IS STRICTLY FORBIDDEN** to copy or deploy individual standalone addon JARs (e.g. `NetworksV6-*.jar`, `GeneticChickengineering-*.jar`, `DynaTech-*.jar`) into the server `/plugins/` or `/plugins/update/` directories. All bug fixes, balance changes, and feature enhancements must be implemented within their corresponding StarSuites modules and deployed exclusively as the consolidated Mega-Suite JAR artifact.
 
 ---
 
