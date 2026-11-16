@@ -20,7 +20,7 @@ import javax.annotation.Nonnull;
 public class GeneticChickensModule extends AbstractSuiteModule implements Listener {
 
     private int maxTier = 9;
-    private int incubationTimeSeconds = 45;
+    private int incubationTimeSeconds = 20;
     private boolean allowSplicing = true;
     private double mutationChance = 0.30;
     private boolean antiCrossWorldDrop = true;
@@ -32,7 +32,7 @@ public class GeneticChickensModule extends AbstractSuiteModule implements Listen
     @Override
     public void onEnable() {
         this.maxTier = config.getInt("max-tier", 9);
-        this.incubationTimeSeconds = config.getInt("incubation-time-seconds", 45);
+        this.incubationTimeSeconds = config.getInt("incubation-time-seconds", 20);
         this.allowSplicing = config.getBoolean("allow-genetic-splicing", true);
         this.mutationChance = config.getDouble("mutation-chance", 0.30);
         this.antiCrossWorldDrop = config.getBoolean("anti-cross-world-drop", true);

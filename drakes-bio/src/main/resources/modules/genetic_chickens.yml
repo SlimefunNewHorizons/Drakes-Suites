@@ -1,7 +1,7 @@
 # Configuración modular: GeneticChickengineering
 enabled: true
 max-tier: 9
-incubation-time-seconds: 45
+incubation-time-seconds: 20
 allow-genetic-splicing: true
-mutation-chance: 0.15
+mutation-chance: 0.30
 anti-cross-world-drop: true

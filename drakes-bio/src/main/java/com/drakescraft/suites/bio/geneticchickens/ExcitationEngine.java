@@ -19,7 +19,7 @@ public final class ExcitationEngine {
     /**
      * Calcula la duración en ticks del ciclo de excitación.
      *
-     * @param baseTime     Tiempo base en ticks (por defecto 14).
+     * @param baseTime     Tiempo base en ticks (por defecto 6).
      * @param tier         Tier del recurso de la especie (0 a 9).
      * @param dnaStrength  Fuerza del ADN del espécimen (0 a 10).
      * @param machineSpeed Velocidad de procesamiento de la máquina (1, 2, 10, 25).
