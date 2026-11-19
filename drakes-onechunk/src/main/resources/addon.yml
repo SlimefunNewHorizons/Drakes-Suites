@@ -4,4 +4,4 @@ version: '${project.version}'
 api-version: 3.17.0
 repository: SlimefunNewHorizons/Drakes-Suites
 authors: [JackStar6677-1]
-depend: [AOneBlock]
+softdepend: [AOneBlock]
