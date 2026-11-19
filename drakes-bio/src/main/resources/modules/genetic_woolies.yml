@@ -1,0 +1,7 @@
+# Configuración modular: Genetic Woolies (Ovejas Genéticas Mendelianas)
+enabled: true
+mutation-chance: 0.25
+max-bonus-wool: 2
+apply-custom-name: true
+worlds-excluded:
+  - laboratorio
