@@ -71,6 +71,17 @@ class CommandModalityGateTest {
     }
 
     @ParameterizedTest
+    @CsvSource({"/lobby", "/hub", "/l", "/survival", "/clasico", "/island", "/ob", "/onechunk", "/menu", "/modalidades"})
+    void testLaboratoryExitCommandsAllowed(String command) {
+        WorldMock world = server.addSimpleWorld("laboratorio");
+        PlayerMock player = server.addPlayer();
+        player.teleport(world.getSpawnLocation());
+        PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(player, command);
+        server.getPluginManager().callEvent(event);
+        assertFalse(event.isCancelled(), "Exit command must be allowed in laboratorio: " + command);
+    }
+
+    @ParameterizedTest
     @CsvSource({"/sf cheat STONE", "/slimefun:sf give DIAMOND"})
     void testLaboratorySubcommandRestrictions(String command) {
         WorldMock world = server.addSimpleWorld("laboratorio");
