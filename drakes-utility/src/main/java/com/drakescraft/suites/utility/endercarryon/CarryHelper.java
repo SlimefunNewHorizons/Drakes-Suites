@@ -77,7 +77,7 @@ public final class CarryHelper {
 
             itemMeta.setCustomModelData(CarryKeys.ENTITY_ID);
             itemMeta.getPersistentDataContainer().set(CarryKeys.CARRY, PersistentDataType.BYTE, (byte) 1);
-            itemMeta.getPersistentDataContainer().set(CarryKeys.ENTITY_DATA, PersistentDataType.STRING, snapshotData);
+            CarriedEntityData.write(itemMeta.getPersistentDataContainer(), CarryKeys.ENTITY_DATA, snapshotData);
 
             String name = entity.getCustomName() != null ? entity.getCustomName() : entity.getType().name();
             itemMeta.displayName(Component.text("Carrying: " + name).color(NamedTextColor.GOLD));

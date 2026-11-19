@@ -63,20 +63,25 @@ public class EnderCarryOnModule extends AbstractSuiteModule implements Listener 
 
         // Check if player is carrying an entity
         if (item.hasItemMeta() && item.getItemMeta().getPersistentDataContainer().has(CarryKeys.CARRY, PersistentDataType.BYTE)) {
-            if (item.getItemMeta().getPersistentDataContainer().has(CarryKeys.ENTITY_DATA, PersistentDataType.STRING)) {
+            if (CarriedEntityData.has(item.getItemMeta().getPersistentDataContainer(), CarryKeys.ENTITY_DATA)) {
                 if (event.getAction().isRightClick() && event.getClickedBlock() != null) {
-                    String snapshotData = item.getItemMeta().getPersistentDataContainer().get(CarryKeys.ENTITY_DATA, PersistentDataType.STRING);
-                    if (snapshotData != null) {
-                        try {
+                    event.setCancelled(true);
+                    try {
+                        String snapshotData = CarriedEntityData.read(item.getItemMeta().getPersistentDataContainer(), CarryKeys.ENTITY_DATA);
+                        if (snapshotData != null) {
                             EntitySnapshot snapshot = Bukkit.getEntityFactory().createEntitySnapshot(snapshotData);
                             Location location = event.getClickedBlock().getRelative(event.getBlockFace()).getLocation().add(0.5, 0, 0.5);
-                            snapshot.createEntity(location);
-                        } catch (Exception ex) {
-                            logWarn("Could not deserialize carried entity snapshot: " + ex.getMessage());
+                            Entity restored = snapshot.createEntity(location);
+                            if (restored == null || !restored.isValid()) {
+                                player.sendMessage("Could not release this entity. Its carrier has been kept safe.");
+                                return;
+                            }
+                            player.getInventory().setItemInMainHand(null);
                         }
+                    } catch (Exception ex) {
+                        logWarn("Could not restore carried entity: " + ex.getClass().getSimpleName());
+                        player.sendMessage("Could not release this entity. Its carrier has been kept safe.");
                     }
-                    player.getInventory().setItemInMainHand(null);
-                    event.setCancelled(true);
                 }
                 return;
             }
