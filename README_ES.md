@@ -30,13 +30,15 @@
 
 ---
 
-> ### Estado de la Rama: `26.x` (Sandbox de Proxima Generacion)
-> Esta rama implementa la evolucion de la arquitectura StarSuites hacia el stack **Purpur 26.2** (`api-version: 26.2`, bytecode Java 25, dependencias Maven actualizadas y compilacion exitosa con tests unitarios).  
-> **Aviso de Produccion:** La rama de produccion estable para la temporada en curso en Dallas permanece en [`main`](https://github.com/SlimefunNewHorizons/Drakes-Suites/tree/main) (Paper 1.21.11 LTS).
+> ### Estado de la Rama: `26.x` — en produccion (Temporada 2)
+> Esta es la linea desplegada en el servidor de produccion DrakesCraft (Dallas) desde la Temporada 2: **Purpur 26.2 (build 141) con Java 25**.
+> Las 8 suites y `drakes-multiverse` cargan junto con algunos JARs de addons sueltos que aun no se han absorbido
+> (ver la [instantanea de runtime](README.md#runtime-snapshot-season-2-2026-11-20), medida el 2026-11-20 desde `logs/latest.log` y los `modules/*.yml`).
+> `main` es la linea anterior (Paper 1.21.11, Java 21, Temporada 1) y queda para referencia y hotfixes de esa linea.
 >
-> 🛑 **ESTÁNDAR ARQUITECTÓNICO INVIOLABLE — CERO JARS DE ADDONS SUELTOS EN `/plugins`:**  
-> Bajo el modelo StarSuites, **la totalidad de los 180+ addons de Slimefun está unificada dentro de las 8 Mega-Suites (`drakes-core` a `drakes-server`) y `drakes-multiverse`**.  
-> **QUEDA TERMINANTEMENTE PROHIBIDO** copiar o desplegar JARs individuales de micro-addons (ej. `NetworksV6-*.jar`, `GeneticChickengineering-*.jar`, `DynaTech-*.jar`) en los directorios `/plugins/` o `/plugins/update/` del servidor. Toda corrección de bugs, rebalanceo o nueva función debe implementarse dentro de su módulo correspondiente en StarSuites y desplegarse única y exclusivamente como el artefacto JAR consolidado de la Mega-Suite completa.
+> **Estandar objetivo:** consolidar todos los addons dentro de las suites y no desplegar JARs sueltos. Hoy conviven ambos; que copia
+> es la efectiva en cada caso **aun no esta verificado** (ej. `DynaTech`, `FluffyMachines`, `Supreme`, `NetworksV6`, `SensibleToolbox`).
+> Todo arreglo nuevo debe aplicarse tambien en el modulo equivalente de la suite.
 
 ---
 
@@ -201,18 +203,16 @@ Los addons ya no instancian bucles Bukkit `runTaskTimer` desacoplados que satura
 
 ## 6. Compilacion, Perfiles Maven Duales y Compatibilidad Cruzada (1.21.11 / 26.X)
 
-Para garantizar que cada JAR de StarSuites funcione sin modificaciones binarias tanto en el entorno de produccion actual (**Paper/Purpur 1.21.11**) como en la nueva generacion (**Purpur 26.X / 26.2**), el monorepo implementa una arquitectura dual:
+El monorepo tiene dos perfiles Maven. `purpur-26` es el predeterminado (`activeByDefault`) y produce los artefactos de la Temporada 2.
 
 ### Perfiles de Compilacion Maven
-* **`paper-21` (Activo para la Temporada Actual):**
-  Apunta a `Paper 1.21.11-R0.1-SNAPSHOT` con `MockBukkit 4.110.0` y `--release 21`. Ideal para compilar artefactos para la temporada viva.
+* **`purpur-26` (predeterminado, produccion):** `Purpur 26.2.build.+` con bytecode Java 25.
   ```bash
   mvn clean test
   ```
-* **`purpur-26` (Proxima Generacion / Sandbox 26.2):**
-  Activa la API de `Purpur 26.2.build.+` con bytecode Java 25 para auditar la compatibilidad contra la nueva plataforma:
+* **`paper-21` (linea anterior):** `Paper 1.21.11-R0.1-SNAPSHOT`, `MockBukkit 4.110.0` y `--release 21`; para la linea de la Temporada 1.
   ```bash
-  mvn clean test -Ppurpur-26
+  mvn clean test -Ppaper-21
   ```
 
 ---
@@ -239,23 +239,14 @@ DrakesPurpur y StarSuites soportan 6 modalidades canonicas:
 
 ---
 
-## 9. Ciclo de Vida Dual y Flujo de Trabajo (Como se Trabaja en el Ecosistema)
+## 9. Ciclo de Vida y Flujo de Trabajo
 
-Para entender la arquitectura y evitar cualquier confusion tecnica entre desarrolladores, colaboradores (como Chagui68) y agentes de IA (Antigravity, Codex, Claude), el desarrollo opera bajo un **modelo de dos niveles**:
-
-### Nivel 1: Produccion Viva en Dallas (Temporada Actual)
-* **Realidad Operativa:** El servidor en produccion corre actualmente con los JARs individuales (`MultiverseNets-v3.3.jar`, `Supreme.jar`, `PlayerVaultZ.jar`, etc.).
-* **Regla de Oro Anti-Wipe:** **Esta estrictamente prohibido reemplazar los plugins vivos por las suites consolidadas a mitad de temporada.** Hacerlo arriesgaria los inventarios de los jugadores activos.
-* **Flujo de Hotfixes en Vivo:** Cuando ocurre un bug critico en produccion:
-  1. Se corrige en el repositorio del plugin (ej. `MultiverseNets`).
-  2. Se ejecutan sus pruebas unitarias (`mvn clean test`).
-  3. Se compila su JAR individual y se despliega directamente a produccion mediante `desplegar_via_panel.py`.
-
-### Nivel 2: Monorepo StarSuites (Staging y Proxima Temporada)
-* **Objetivo:** La consolidacion definitiva en los 8 JARs oficiales (`drakes-core` hasta `drakes-server` + `drakes-multiverse`) para el arranque limpio de la siguiente temporada.
-* **Guia para Desarrolladores (Chagui y Staff):**
-  - Si vas a desarrollar o anadir funciones a un plugin concreto (ej. `MultiverseNets` o `MultiverseCreatures`), puedes trabajar en tu repositorio especifico o colaborar directamente en el monorepo.
-  - Al compilar y publicar en el repositorio Maven, StarSuites absorbe automaticamente la ultima version en la siguiente compilacion global (`mvn clean package`).
+* **Produccion (Temporada 2):** las suites de la rama `26.x` corren en Dallas junto a los JARs sueltos listados en la instantanea de runtime.
+  El despliegue usa `desplegar_via_panel.py` (respaldo del JAR vivo y SHA-256 verificado) y se aplica en el siguiente reinicio seguro.
+* **Hotfixes:** un arreglo en un plugin suelto debe aplicarse tambien al modulo equivalente aqui, para que retirar el JAR suelto no devuelva el bug.
+* **Absorber un addon suelto:** activar su modulo, confirmar que copia carga, retirar el JAR suelto en una ventana de mantenimiento y no tocar
+  las claves PDC de `slimefun:slimefun_item`, para que items y bloques existentes sobrevivan.
+* **Colaboradores:** trabajan en el repositorio del plugin o directo en este monorepo (ver `CONTRIBUTING.md`); la compilacion del monorepo absorbe la ultima version publicada.
 
 ---
 

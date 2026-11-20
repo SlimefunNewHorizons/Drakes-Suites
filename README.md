@@ -30,13 +30,48 @@
 
 ---
 
-> ### Branch Status: `26.x` (Next-Generation Sandbox)
-> This branch implements the evolution of the StarSuites architecture towards the **Purpur 26.2** API (`api-version: 26.2`, Java 25 bytecode, modern Maven dependencies, and complete test suite validation).  
-> **Production Branch:** The rock-solid production release for the active season running in Dallas remains on [`main`](https://github.com/SlimefunNewHorizons/Drakes-Suites/tree/main) (Paper 1.21.11 LTS).
->
-> 🛑 **MANDATORY ARCHITECTURAL STANDARD — NO STANDALONE ADDON JARS IN `/plugins`:**  
-> In the StarSuites paradigm, **all 180+ Slimefun addons are unified within the 8 Mega-Suites (`drakes-core` through `drakes-server`) and `drakes-multiverse`**.  
-> **IT IS STRICTLY FORBIDDEN** to copy or deploy individual standalone addon JARs (e.g. `NetworksV6-*.jar`, `GeneticChickengineering-*.jar`, `DynaTech-*.jar`) into the server `/plugins/` or `/plugins/update/` directories. All bug fixes, balance changes, and feature enhancements must be implemented within their corresponding StarSuites modules and deployed exclusively as the consolidated Mega-Suite JAR artifact.
+> ### Branch Status: `26.x` — running in production (Season 2)
+> This is the line deployed on the DrakesCraft production server (Dallas) since Season 2: **Purpur 26.2 (build 141) on Java 25**.
+> The 8 suites and `drakes-multiverse` are loaded together with a number of standalone addon JARs that have not been absorbed yet
+> (see [Runtime snapshot](#runtime-snapshot-season-2-2026-11-20) for the exact state and how it was measured).
+> `main` is the previous line (Paper 1.21.11, Java 21, Season 1) and is kept for reference and hotfixes of that line.
+
+---
+
+## Runtime snapshot (Season 2, 2026-11-20)
+
+Measured on the production server (Dallas) from `logs/latest.log` after the 2026-11-20 restart, the Purpur/BentoBox/Vault startup lines,
+`/plugins` and the `plugins/<Suite>/modules/*.yml` files. Nothing here is taken from older documentation.
+
+| Item | Value |
+| :--- | :--- |
+| Server software | Purpur `26.2-141` (custom DrakesPurpur branch `feat/slimefun-native-engine`), API `26.2.build.141-stable` |
+| Java | 25.0.3 (LTS) |
+| BentoBox | 3.22.4-SNAPSHOT |
+| Slimefun core | `Slimefun v11.0-Universal-26.x-SNAPSHOT` (this organization's `Slimefun4-Drake`, branch `port-26x`) |
+| Plugins loaded | 204 (7 Paper plugins + 197 Bukkit plugins); 198 active JARs in `/plugins` |
+| Suites loaded | `DrakesCore`, `DrakesTech`, `DrakesBio`, `DrakesMagic`, `DrakesGenerators`, `DrakesUtility`, `DrakesCombat`, `DrakesServer` (all `2.0.0-26.X-SNAPSHOT`) and `drakes-multiverse` |
+| Vault economy | InvSwitcher (per-modality wallets) is the primary provider; EssentialsX providers stay as fallback |
+| Native libraries | `libslimefun_ffi.so`, `libodysseia_ffi.so`, `libdrakes_hybrid_ffi.so` load at startup; Slimefun-Rust JNI ABI 2 is active |
+
+Modules per suite (`enabled` / total, from each `modules/*.yml`):
+
+| Suite | Enabled / total | Modules |
+| :--- | :--- | :--- |
+| DrakesTech | 18 / 18 | supreme, sensibletoolbox, sanecrafting, quaptics, privatestorage, nexcavate, networks, nanotech, infinity, idreamofeasy, globiamachines, foxy, fluffymachines, emctech, dynatech, danktech, customizer, advancedtech |
+| DrakesBio | 10 / 11 | slimytreetaps, slimy_bees, mob_capturer, globalwarming, genetic_woolies, genetic_chickens, gastronomicon, flowerpower, exotic_garden, drugfun, cultivation |
+| DrakesMagic | 13 / 13 | transcendence, spiritsunchained, soul_jars, slimechem, relics_cthonia, netheopoiesis, magic_xpansion, infernal_expansion, element_manipulation, demonic_expansion, crystamae, coronalis, alchimia_vitae |
+| DrakesGenerators | 7 / 7 | ultimate_generators, smg, ore_chunks, litexpansion, liquid, ecopower, better_reactors |
+| DrakesUtility | 19 / 19 | worldedit_sf, vanillapatpat, trash, soundmuffler, smallspace, slimehud, slimeframe, simpleutils, sfcalc, portalgun, notenoughaddons, guidetools, geyser_heads, extrautils, extratools, endercarryon, colored_enderchests, chest_terminal, backpacks |
+| DrakesCombat | 10 / 14 | warfare, slimetinker, slimefundisc, slimefun_nukes, sfmobdrops, obsidian_expansion, missilewarfare, military_arsenal, luckyblocks, hardcore_combat, galaxyfun, fn_amplifications, extragear, cringle_bosses |
+| DrakesServer | 12 / 12 | star, random_expansion, playervaultz, odysseia, market, invswitcher, display, cosmetics_armor, bump, breweryx, brewery_menu, axgraves |
+| DrakesMultiverse | n/a | nets, creatures |
+
+Known gaps between this README and the running server:
+* Several standalone addon JARs (for example `DynaTech`, `FluffyMachines`, `Supreme`, `NetworksV6`, `SensibleToolbox`) are still loaded next to
+  the suites that also contain a module for them. Which copy is effective for each of them has **not** been verified yet.
+* The DrakesPurpur kernel reports its own Rust engine as disabled (`perf.yml native.*`) while the FFI libraries above are loaded and active;
+  only the libraries that are listed as loaded in the log are claimed here.
 
 ---
 
@@ -205,18 +240,18 @@ Addons no longer trigger independent Bukkit async timers that flood the primary 
 
 ## 6. Compilation, Dual Maven Profiles & Cross-Version Architecture (1.21.11 / 26.X)
 
-To ensure each StarSuites JAR runs seamlessly without bytecode modification on both the live production environment (**Paper/Purpur 1.21.11**) and the next-gen platform (**Purpur 26.X / 26.2**), the monorepo provides a dual-profile architecture:
+The monorepo has two Maven profiles. `purpur-26` is the default (`activeByDefault`) and is the one used for the production artifacts of Season 2:
 
 ### Maven Compilation Profiles
-* **`paper-21` (Active for Current Season):**
-  Targets `Paper 1.21.11-R0.1-SNAPSHOT` with `MockBukkit 4.110.0` and `--release 21`. Recommended for building production artifacts for the current live season.
+* **`purpur-26` (default, production):**
+  Targets `Purpur 26.2.build.+` with Java 25 bytecode.
   ```bash
   mvn clean test
   ```
-* **`purpur-26` (Next-Gen Sandbox 26.2):**
-  Targets `Purpur 26.2.build.+` with Java 25 bytecode to validate forward-compatibility:
+* **`paper-21` (previous line):**
+  Targets `Paper 1.21.11-R0.1-SNAPSHOT` with `MockBukkit 4.110.0` and `--release 21`; kept for the Season 1 line.
   ```bash
-  mvn clean test -Ppurpur-26
+  mvn clean test -Ppaper-21
   ```
 
 ---
@@ -243,23 +278,14 @@ DrakesPurpur and StarSuites support 6 canonical modalities:
 
 ---
 
-## 9. Canonical Development Directive & Dual Lifecycle
+## 9. Development Lifecycle
 
-To guarantee absolute operational stability and prevent technical misunderstandings between core developers, contributors (such as Chagui68), and autonomous SRE agents (Antigravity, Codex, Claude), development operates strictly under a **two-level architecture**:
-
-### Level 1: Live Production in Dallas (Current Active Season)
-* **Operational Reality:** The production server currently runs with individual standalone JARs (`MultiverseNets-v3.3.jar`, `Supreme.jar`, `PlayerVaultZ.jar`, etc.).
-* **Anti-Wipe Golden Rule:** **It is strictly forbidden to replace the live individual plugins with the consolidated suites mid-season.** Doing so risks player inventory loss, entity desync, and structure corruptions.
-* **Live Hotfix Workflow:** When a critical bug occurs on the live server:
-  1. Fix the issue directly in the plugin dedicated repository (e.g., `MultiverseNets`).
-  2. Run local unit tests (`mvn clean test`).
-  3. Compile its individual JAR and deploy it to Dallas via `desplegar_via_panel.py`.
-
-### Level 2: StarSuites Monorepo (Staging & Next Season)
-* **Objective:** Complete consolidation into the 8 official suite JARs (`drakes-core` through `drakes-server` + `drakes-multiverse`) for a clean, unified launch next season.
-* **Developer Workflow Guide (Chagui & Staff):**
-  - If you need to develop features for a specific plugin (e.g., `MultiverseNets` or `MultiverseCreatures`), you can work in your dedicated repository or contribute directly to the monorepo.
-  - When you build and publish to the organization Maven repository, StarSuites automatically pulls and bundles the latest version on the next global build (`mvn clean package`).
+* **Production (Season 2):** the suites from branch `26.x` run on Dallas together with the standalone JARs listed in the runtime snapshot.
+  Deployment goes through `desplegar_via_panel.py` (backup of the live JAR first, SHA-256 verified after upload) and takes effect at the next safe restart.
+* **Hotfixes:** a fix applied to a standalone plugin must also be applied to the equivalent module here, so a later removal of the standalone JAR does not bring the bug back.
+* **Absorbing a standalone addon:** enable its module, confirm which copy is loaded, remove the standalone JAR in a maintenance window, and keep the PDC keys
+  of `slimefun:slimefun_item` unchanged so existing items and blocks survive.
+* **Contributors:** work in the plugin's own repository or directly in this monorepo (see `CONTRIBUTING.md`); the monorepo build bundles the latest published version.
 
 ---
 
