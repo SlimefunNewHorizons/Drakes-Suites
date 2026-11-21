@@ -21,11 +21,21 @@ public class ExoticGardenModule extends AbstractSuiteModule {
         super(plugin, "exotic_garden", "Exotic Garden & Culinary Arts");
     }
 
+    static boolean isStandaloneExoticGardenPresent() {
+        return Bukkit.getPluginManager() != null
+                && Bukkit.getPluginManager().getPlugin("ExoticGarden") != null;
+    }
+
     @Override
     public void onEnable() {
         this.bonemealEnabled = config.getBoolean("bonemeal-growth", true);
         int crookDropChance = config.getInt("crook-leaf-drop-chance", 25);
         boolean preventUnnatural = config.getBoolean("anti-dupe.prevent-unnatural-leaf-drops", true);
+
+        if (isStandaloneExoticGardenPresent()) {
+            getPlugin().getLogger().info("[DrakesBio] Plugin standalone ExoticGarden detectado; cediendo listener al addon dedicado.");
+            return;
+        }
 
         this.listener = new ExoticGardenListener(this, this.registry, crookDropChance, preventUnnatural);
         Bukkit.getPluginManager().registerEvents(this.listener, getPlugin());

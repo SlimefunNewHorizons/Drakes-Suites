@@ -54,12 +54,22 @@ public class TreeTapsModule extends AbstractSuiteModule implements Listener {
         super(plugin, "slimytreetaps", "SlimyTreeTaps Bio-Resin Harvesting");
     }
 
+    static boolean isStandaloneSlimyTreeTapsPresent() {
+        return Bukkit.getPluginManager() != null
+                && Bukkit.getPluginManager().getPlugin("SlimyTreeTaps") != null;
+    }
+
     @Override
     public void onEnable() {
         this.standardChance = config.getInt("resin-chance.standard", 25);
         this.reinforcedChance = config.getInt("resin-chance.reinforced", 50);
         this.diamondChance = config.getInt("resin-chance.diamond", 75);
         this.scraperChance = config.getInt("amber-chance", 35);
+
+        if (isStandaloneSlimyTreeTapsPresent()) {
+            logInfo("Plugin standalone SlimyTreeTaps detectado; cediendo eventos al addon dedicado.");
+            return;
+        }
 
         Bukkit.getPluginManager().registerEvents(this, plugin);
         logInfo("SlimyTreeTaps cargado. Extracción de resina: estándar=" + standardChance + "%, reforzado=" + reinforcedChance + "%, diamante=" + diamondChance + "%");

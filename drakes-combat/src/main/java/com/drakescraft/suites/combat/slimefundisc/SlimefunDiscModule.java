@@ -33,9 +33,18 @@ public class SlimefunDiscModule extends AbstractSuiteModule implements Listener 
         super(plugin, "slimefundisc", "SlimefunDisc Custom Acoustic & Music Resonance");
     }
 
+    static boolean isStandaloneSlimefunDiscPresent() {
+        return org.bukkit.Bukkit.getPluginManager() != null
+                && org.bukkit.Bukkit.getPluginManager().getPlugin("Slimefun-Disc") != null;
+    }
+
     @Override
     public void onEnable() {
         registerDefaultTracks();
+        if (isStandaloneSlimefunDiscPresent()) {
+            getPlugin().getLogger().info("[SlimefunDisc] Plugin standalone Slimefun-Disc detectado; cediendo listener al addon dedicado.");
+            return;
+        }
         getPlugin().getServer().getPluginManager().registerEvents(this, getPlugin());
 
         getPlugin().getLogger().info("[SlimefunDisc] Módulo acústico habilitado ("

@@ -56,6 +56,11 @@ public class BetterReactorsModule extends AbstractSuiteModule implements Listene
         public void setCoolantLevel(int coolantLevel) { this.coolantLevel = coolantLevel; }
     }
 
+    static boolean isStandaloneBetterReactorPresent() {
+        var pm = org.bukkit.Bukkit.getPluginManager();
+        return pm != null && (pm.getPlugin("BetterReactor") != null || pm.getPlugin("BetterNuclearReactor") != null);
+    }
+
     @Override
     public void onEnable() {
         this.threadPoolSize = config.getInt("performance.reactor-core-thread-pool", 2);
@@ -63,6 +68,11 @@ public class BetterReactorsModule extends AbstractSuiteModule implements Listene
         this.cryoCoolantLoops = config.getBoolean("features.cryo-coolant-loops", true);
         this.uraniumEnrichment = config.getBoolean("features.uranium-enrichment", true);
         this.meltdownContainment = config.getBoolean("features.meltdown-containment-protocol", true);
+
+        if (isStandaloneBetterReactorPresent()) {
+            logInfo("Plugin standalone BetterReactor detectado; cediendo listener al addon dedicado.");
+            return;
+        }
 
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         logInfo("BetterReactors loaded (threads=" + threadPoolSize + ", cryoLoops=" + cryoCoolantLoops + ", antiDupeLock=" + fuelRodLock + ").");

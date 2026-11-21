@@ -4,9 +4,11 @@ import com.drakescraft.suites.core.compat.CrossVersionAdapter;
 import com.drakescraft.suites.core.module.AbstractSuiteModule;
 import com.drakescraft.suites.core.pdc.SuiteItemPdcBridge;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -38,6 +40,11 @@ public class OreChunksModule extends AbstractSuiteModule implements Listener {
         super(plugin, "ore_chunks", "Slimefun OreChunks Mineral Processing");
     }
 
+    static boolean isStandaloneSlimefunOreChunksPresent() {
+        return Bukkit.getPluginManager() != null
+                && Bukkit.getPluginManager().getPlugin("SlimefunOreChunks") != null;
+    }
+
     @Override
     public void onEnable() {
         this.naturalDropsEnabled = config.getBoolean("natural-drops-enabled", true);
@@ -46,6 +53,11 @@ public class OreChunksModule extends AbstractSuiteModule implements Listener {
         // Precalentar caché de ítems
         for (OreChunkType type : OreChunkType.values()) {
             itemCache.put(type, buildOreChunkItem(type));
+        }
+
+        if (isStandaloneSlimefunOreChunksPresent()) {
+            logInfo("Plugin standalone SlimefunOreChunks detectado; cediendo listener de minería al addon dedicado.");
+            return;
         }
 
         Bukkit.getPluginManager().registerEvents(this, plugin);
@@ -99,7 +111,13 @@ public class OreChunksModule extends AbstractSuiteModule implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onOreMine(BlockBreakEvent e) {
-        if (!naturalDropsEnabled) return;
+        if (!naturalDropsEnabled || isStandaloneSlimefunOreChunksPresent()) return;
+        Player player = e.getPlayer();
+        if (player.getGameMode() != GameMode.SURVIVAL) return;
+        ItemStack tool = player.getInventory().getItemInMainHand();
+        if (tool != null && tool.containsEnchantment(Enchantment.SILK_TOUCH)) {
+            return;
+        }
         Block b = e.getBlock();
         Material mat = b.getType();
 

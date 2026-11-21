@@ -29,6 +29,11 @@ public class GeneticChickensModule extends AbstractSuiteModule implements Listen
         super(plugin, "genetic_chickens", "GeneticChickengineering Tiers 0-9");
     }
 
+    static boolean isStandaloneGeneticChickensPresent() {
+        return Bukkit.getPluginManager() != null
+                && Bukkit.getPluginManager().getPlugin("GeneticChickengineering") != null;
+    }
+
     @Override
     public void onEnable() {
         this.maxTier = config.getInt("max-tier", 9);
@@ -38,6 +43,10 @@ public class GeneticChickensModule extends AbstractSuiteModule implements Listen
         this.antiCrossWorldDrop = config.getBoolean("anti-cross-world-drop", true);
 
         ChickenEggItem.initializeKeys(plugin);
+        if (isStandaloneGeneticChickensPresent()) {
+            logInfo("Plugin standalone GeneticChickengineering detectado; cediendo listener al addon dedicado.");
+            return;
+        }
         Bukkit.getPluginManager().registerEvents(this, plugin);
 
         logInfo("GeneticChickengineering habilitado con éxito. Especies registradas: "

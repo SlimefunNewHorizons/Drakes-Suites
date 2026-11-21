@@ -23,11 +23,21 @@ public class RelicsCthoniaModule extends AbstractSuiteModule {
         super(plugin, "relics_cthonia", "Relics of Cthonia Underworld");
     }
 
+    static boolean isStandaloneRelicsOfCthoniaPresent() {
+        return Bukkit.getPluginManager() != null
+                && Bukkit.getPluginManager().getPlugin("RelicsOfCthonia") != null;
+    }
+
     @Override
     public void onEnable() {
         if (config != null) {
             this.miningDropChance = config.getDouble("mining-drop-chance", 0.005);
             this.mobDropChance = config.getDouble("mob-drop-chance", 0.025);
+        }
+
+        if (isStandaloneRelicsOfCthoniaPresent()) {
+            getPlugin().getLogger().info("[DrakesMagic] Plugin standalone RelicsOfCthonia detectado; cediendo listeners al addon dedicado.");
+            return;
         }
 
         this.dropListener = new RelicsDropListener(this, registry);

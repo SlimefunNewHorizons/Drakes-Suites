@@ -41,10 +41,21 @@ public class PortalGunModule extends AbstractSuiteModule implements Listener {
         super(plugin, "portalgun", "SFPortalGun Quantum Entanglement Teleporters");
     }
 
+    static boolean isStandalonePortalGunPresent() {
+        if (Bukkit.getPluginManager() == null) return false;
+        return Bukkit.getPluginManager().getPlugin("SFPortalGunsExtension") != null
+                || Bukkit.getPluginManager().getPlugin("SFPortalGun") != null;
+    }
+
     @Override
     public void onEnable() {
         this.portalGunItem = new PortalGunItem(getPlugin());
         this.gravityGunItem = new GravityGunItem(getPlugin());
+
+        if (isStandalonePortalGunPresent()) {
+            logInfo("Plugin standalone SFPortalGunsExtension detectado; cediendo listeners al addon dedicado.");
+            return;
+        }
 
         this.listener = new PortalGunEventListener(getPlugin());
         this.menuListener = new PortalGunMenuListener(getPlugin());

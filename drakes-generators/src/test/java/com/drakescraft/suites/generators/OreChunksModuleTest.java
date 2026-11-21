@@ -45,4 +45,29 @@ class OreChunksModuleTest {
             assertTrue(SuiteItemPdcBridge.hasSlimefunId(item, type.getSlimefunId()));
         }
     }
+
+    @Test
+    @DisplayName("OreChunksModule nunca suelta OreChunks cuando se mina con Silk Touch")
+    void testSilkTouchDoesNotDropOreChunks() {
+        OreChunksModule module = (OreChunksModule) plugin.getModuleManager().getModule("ore_chunks");
+        assertNotNull(module);
+
+        var world = server.addSimpleWorld("ore_test_world");
+        var player = server.addPlayer("SilkMiner");
+        player.setGameMode(org.bukkit.GameMode.SURVIVAL);
+
+        ItemStack silkPick = new ItemStack(Material.DIAMOND_PICKAXE);
+        silkPick.addUnsafeEnchantment(org.bukkit.enchantments.Enchantment.SILK_TOUCH, 1);
+        player.getInventory().setItemInMainHand(silkPick);
+
+        var block = world.getBlockAt(0, 64, 0);
+        block.setType(Material.IRON_ORE);
+
+        for (int i = 0; i < 100; i++) {
+            module.onOreMine(new org.bukkit.event.block.BlockBreakEvent(block, player));
+        }
+
+        assertTrue(world.getEntitiesByClass(org.bukkit.entity.Item.class).isEmpty(),
+                "Minar con Silk Touch nunca debe generar OreChunks adicionales");
+    }
 }

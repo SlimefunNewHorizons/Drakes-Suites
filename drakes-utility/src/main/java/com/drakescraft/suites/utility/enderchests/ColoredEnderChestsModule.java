@@ -16,9 +16,11 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -54,6 +56,7 @@ public class ColoredEnderChestsModule extends AbstractSuiteModule implements Lis
 
     private final Map<String, ItemStack[]> frequencyStorage = new ConcurrentHashMap<>();
     private final Map<UUID, String> activeViewerFrequencies = new ConcurrentHashMap<>();
+    private final Map<UUID, Inventory> openChestInventories = new ConcurrentHashMap<>();
 
     private boolean cacheFrequencies = true;
     private boolean crossPlayerLock = true;
@@ -63,11 +66,21 @@ public class ColoredEnderChestsModule extends AbstractSuiteModule implements Lis
         super(plugin, "colored_enderchests", "Frequency Colored EnderChests");
     }
 
+    static boolean isStandaloneColoredEnderChestsPresent() {
+        return Bukkit.getPluginManager() != null
+                && Bukkit.getPluginManager().getPlugin("ColoredEnderChests") != null;
+    }
+
     @Override
     public void onEnable() {
         this.cacheFrequencies = config.getBoolean("performance.cache-frequencies", true);
         this.crossPlayerLock = config.getBoolean("anti-dupe.cross-player-chest-lock", true);
         this.maxFrequency = config.getInt("features.max-frequency", 4096);
+
+        if (isStandaloneColoredEnderChestsPresent()) {
+            logInfo("Plugin standalone ColoredEnderChests detectado; cediendo eventos al addon dedicado.");
+            return;
+        }
 
         Bukkit.getPluginManager().registerEvents(this, plugin);
 
@@ -83,6 +96,7 @@ public class ColoredEnderChestsModule extends AbstractSuiteModule implements Lis
             }
         }
         activeViewerFrequencies.clear();
+        openChestInventories.clear();
         logInfo("ColoredEnderChests deshabilitado limpiamente.");
     }
 
@@ -122,6 +136,7 @@ public class ColoredEnderChestsModule extends AbstractSuiteModule implements Lis
 
     public boolean isColoredEnderChest(ItemStack item) {
         if (item == null || item.getType() != Material.ENDER_CHEST) return false;
+        if (SuiteItemPdcBridge.getCustomInt(item, NAMESPACE, KEY_IS_BIG) == null) return false;
         String sfId = SuiteItemPdcBridge.getSlimefunId(item);
         return sfId != null && sfId.startsWith("COLORED_ENDER_CHEST_");
     }
@@ -179,7 +194,7 @@ public class ColoredEnderChestsModule extends AbstractSuiteModule implements Lis
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (!isEnabled()) return;
+        if (!isEnabled() || isStandaloneColoredEnderChestsPresent()) return;
         if (event.getHand() != EquipmentSlot.HAND) return;
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
@@ -210,7 +225,7 @@ public class ColoredEnderChestsModule extends AbstractSuiteModule implements Lis
             String sfId = SuiteItemPdcBridge.getSlimefunId(item);
             if (sfId != null) {
                 String[] parts = sfId.split("_");
-                if (parts.length >= 6) {
+                if (parts.length >= 7) {
                     big = "BIG".equalsIgnoreCase(parts[3]);
                     c1 = Integer.parseInt(parts[4]);
                     c2 = Integer.parseInt(parts[5]);
@@ -318,6 +333,14 @@ public class ColoredEnderChestsModule extends AbstractSuiteModule implements Lis
             return;
         }
 
+        InventoryView openView = player.getOpenInventory();
+        if (openView != null && openView.getTopInventory() != null) {
+            InventoryType topType = openView.getTopInventory().getType();
+            if (topType != InventoryType.CRAFTING && topType != InventoryType.CREATIVE) {
+                return;
+            }
+        }
+
         String modality = resolveModality(world != null ? world : (player != null ? player.getWorld() : null));
         String freqKey = getFrequencyKey(modality, owner, big, c1, c2, c3);
         int slots = big ? 54 : 27;
@@ -330,8 +353,10 @@ public class ColoredEnderChestsModule extends AbstractSuiteModule implements Lis
             inv.setContents(saved);
         }
 
-        activeViewerFrequencies.put(player.getUniqueId(), freqKey);
+        // Abrir ANTES de registrar en los mapas para evitar que un InventoryCloseEvent previo sobrescriba la caché
         player.openInventory(inv);
+        activeViewerFrequencies.put(player.getUniqueId(), freqKey);
+        openChestInventories.put(player.getUniqueId(), inv);
 
         try {
             player.playSound(player.getLocation(), Sound.BLOCK_ENDER_CHEST_OPEN, 1.0f, 1.0f);
@@ -342,7 +367,13 @@ public class ColoredEnderChestsModule extends AbstractSuiteModule implements Lis
     public void onInventoryClose(InventoryCloseEvent event) {
         if (!(event.getPlayer() instanceof Player player)) return;
 
-        String freqKey = activeViewerFrequencies.remove(player.getUniqueId());
+        UUID uuid = player.getUniqueId();
+        Inventory expected = openChestInventories.get(uuid);
+        if (expected == null || event.getInventory() != expected) {
+            return;
+        }
+        openChestInventories.remove(uuid);
+        String freqKey = activeViewerFrequencies.remove(uuid);
         if (freqKey != null) {
             ItemStack[] contents = event.getInventory().getContents();
             frequencyStorage.put(freqKey, contents.clone());
@@ -355,7 +386,7 @@ public class ColoredEnderChestsModule extends AbstractSuiteModule implements Lis
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
-        if (!isEnabled()) return;
+        if (!isEnabled() || isStandaloneColoredEnderChestsPresent()) return;
         ItemStack item = event.getItemInHand();
         if (isColoredEnderChest(item)) {
             // Guardar frecuencia en el bloque si se coloca

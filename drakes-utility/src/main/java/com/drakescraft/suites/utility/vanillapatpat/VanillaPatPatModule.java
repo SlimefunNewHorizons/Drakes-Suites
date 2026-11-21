@@ -38,6 +38,11 @@ public class VanillaPatPatModule extends AbstractSuiteModule implements Listener
         super(plugin, "vanillapatpat", "VanillaPatPat Mob Interaction & Petting Mechanics");
     }
 
+    static boolean isStandaloneVanillaPatPatPresent() {
+        return org.bukkit.Bukkit.getPluginManager() != null
+                && org.bukkit.Bukkit.getPluginManager().getPlugin("VanillaPatPat") != null;
+    }
+
     @Override
     public void onEnable() {
         FileConfiguration config = getConfig();
@@ -57,6 +62,11 @@ public class VanillaPatPatModule extends AbstractSuiteModule implements Listener
             this.patParticle = Particle.valueOf(particleName);
         } catch (IllegalArgumentException e) {
             this.patParticle = Particle.HEART;
+        }
+
+        if (isStandaloneVanillaPatPatPresent()) {
+            logInfo("Plugin standalone VanillaPatPat detectado; cediendo listener al plugin dedicado.");
+            return;
         }
 
         getPlugin().getServer().getPluginManager().registerEvents(this, getPlugin());

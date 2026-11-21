@@ -170,4 +170,39 @@ class ColoredEnderChestsModuleTest {
         assertEquals(32, finalSurvivalItem.getAmount());
         player.closeInventory();
     }
+
+    @Test
+    @DisplayName("ColoredEnderChestsModule no intercepta ítems de ColoredEnderChests standalone sin PDC drakesutility")
+    void testDoesNotInterceptStandaloneColoredEnderChest() {
+        ColoredEnderChestsModule module = (ColoredEnderChestsModule) plugin.getModuleManager().getModule("colored_enderchests");
+        assertNotNull(module);
+
+        ItemStack standaloneChest = new ItemStack(Material.ENDER_CHEST);
+        SuiteItemPdcBridge.setSlimefunId(standaloneChest, "COLORED_ENDER_CHEST_SMALL_0_0_0");
+
+        assertFalse(module.isColoredEnderChest(standaloneChest),
+                "Un ColoredEnderChest del addon standalone sin PDC drakesutility no debe ser secuestrado");
+    }
+
+    @Test
+    @DisplayName("ColoredEnderChestsModule rechaza abrir si ya hay otro contenedor abierto y no sobrescribe caché con otro inventario")
+    void testDoesNotOverwriteCacheFromUnrelatedInventoryClose() {
+        ColoredEnderChestsModule module = (ColoredEnderChestsModule) plugin.getModuleManager().getModule("colored_enderchests");
+        assertNotNull(module);
+
+        PlayerMock player = server.addPlayer("AntiDupeTester");
+        org.bukkit.inventory.Inventory unrelated = server.createInventory(null, 27);
+        unrelated.setItem(0, new ItemStack(Material.NETHERITE_BLOCK, 64));
+        player.openInventory(unrelated);
+
+        // Intentar abrir un ColoredEnderChest mientras otro inventario está abierto debe ser bloqueado
+        module.openEnderChest(player, false, 9, 9, 9);
+        assertSame(unrelated, player.getOpenInventory().getTopInventory());
+
+        // Cerrar el inventario ajeno nunca debe poblar la frecuencia 9-9-9
+        player.closeInventory();
+        String key = module.getFrequencyKey(false, 9, 9, 9);
+        assertNull(module.getFrequencyStorage().get(key),
+                "Cerrar un inventario ajeno nunca debe guardar sus ítems en frequencyStorage");
+    }
 }

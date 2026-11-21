@@ -122,7 +122,12 @@ public class EnderCarryOnModule extends AbstractSuiteModule implements Listener 
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
-        if (isCarriedItem(event.getCurrentItem())) {
+        if (isCarriedItem(event.getCurrentItem()) || isCarriedItem(event.getCursor())) {
+            event.setCancelled(true);
+            return;
+        }
+        int hotbar = event.getHotbarButton();
+        if (hotbar >= 0 && isCarriedItem(event.getWhoClicked().getInventory().getItem(hotbar))) {
             event.setCancelled(true);
         }
     }

@@ -16,11 +16,23 @@ import com.drakescraft.suites.core.module.SuiteModuleManager;
 public class DrakesMultiversePlugin extends MultiverseNets {
 
     private SuiteModuleManager moduleManager;
+    private boolean embeddedNetsActive;
+
+    static boolean isStandaloneMultiverseNetsPresent() {
+        return org.bukkit.Bukkit.getPluginManager() != null
+                && org.bukkit.Bukkit.getPluginManager().getPlugin("MultiverseNets") != null;
+    }
 
     @Override
     public void onEnable() {
-        // Inicializar motor soberano de redes digitales de Chagui68
-        super.onEnable();
+        // Solo inicializar el motor embebido de MultiverseNets si el plugin standalone NO está instalado
+        if (isStandaloneMultiverseNetsPresent()) {
+            this.embeddedNetsActive = false;
+            getLogger().info("[DrakesMultiverse] Plugin standalone MultiverseNets detectado; cediendo listeners, ticker y almacenamiento al plugin dedicado.");
+        } else {
+            super.onEnable();
+            this.embeddedNetsActive = true;
+        }
 
         this.moduleManager = new SuiteModuleManager(this);
 
@@ -47,7 +59,10 @@ public class DrakesMultiversePlugin extends MultiverseNets {
         if (core != null && core.getSuiteRegistry() != null) {
             core.getSuiteRegistry().unregisterSuite("multiverse");
         }
-        super.onDisable();
+        if (embeddedNetsActive) {
+            super.onDisable();
+            embeddedNetsActive = false;
+        }
         getLogger().info("[DrakesMultiverse] Suite de Chagui68 deshabilitada limpiamente.");
     }
 

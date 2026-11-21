@@ -17,7 +17,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -39,6 +41,7 @@ public class SoundMufflerModule extends AbstractSuiteModule implements Listener 
 
     private final Map<Location, MufflerData> mufflers = new ConcurrentHashMap<>();
     private final Map<UUID, Location> openMufflerGuis = new ConcurrentHashMap<>();
+    private final Map<UUID, Inventory> openMufflerInventories = new ConcurrentHashMap<>();
 
     private int defaultRadius = 8;
     private int defaultVolume = 10;
@@ -81,6 +84,7 @@ public class SoundMufflerModule extends AbstractSuiteModule implements Listener 
     public void onDisable() {
         mufflers.clear();
         openMufflerGuis.clear();
+        openMufflerInventories.clear();
     }
 
     public ItemStack createMufflerItem() {
@@ -179,8 +183,10 @@ public class SoundMufflerModule extends AbstractSuiteModule implements Listener 
         }
         inv.setItem(8, toggleItem);
 
-        openMufflerGuis.put(player.getUniqueId(), loc);
+        // Abrir ANTES de registrar en los mapas para evitar que un InventoryCloseEvent previo limpie el nuevo GUI
         player.openInventory(inv);
+        openMufflerGuis.put(player.getUniqueId(), loc);
+        openMufflerInventories.put(player.getUniqueId(), inv);
         player.playSound(loc, Sound.BLOCK_NOTE_BLOCK_CHIME, 0.5f, 1.5f);
     }
 
@@ -189,7 +195,12 @@ public class SoundMufflerModule extends AbstractSuiteModule implements Listener 
         if (!(e.getWhoClicked() instanceof Player player)) {
             return;
         }
-        Location loc = openMufflerGuis.get(player.getUniqueId());
+        UUID uuid = player.getUniqueId();
+        Inventory expected = openMufflerInventories.get(uuid);
+        if (expected == null || e.getView().getTopInventory() != expected) {
+            return;
+        }
+        Location loc = openMufflerGuis.get(uuid);
         if (loc == null) {
             return;
         }
@@ -217,6 +228,26 @@ public class SoundMufflerModule extends AbstractSuiteModule implements Listener 
             player.playSound(loc, Sound.UI_BUTTON_CLICK, 0.5f, 1.2f);
             openMufflerGui(player, loc, data);
         }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onInventoryClose(InventoryCloseEvent e) {
+        if (!(e.getPlayer() instanceof Player player)) {
+            return;
+        }
+        UUID uuid = player.getUniqueId();
+        Inventory expected = openMufflerInventories.get(uuid);
+        if (expected != null && e.getInventory() == expected) {
+            openMufflerInventories.remove(uuid);
+            openMufflerGuis.remove(uuid);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerQuit(PlayerQuitEvent e) {
+        UUID uuid = e.getPlayer().getUniqueId();
+        openMufflerInventories.remove(uuid);
+        openMufflerGuis.remove(uuid);
     }
 
     public MufflerData getMufflerAt(Location loc) {

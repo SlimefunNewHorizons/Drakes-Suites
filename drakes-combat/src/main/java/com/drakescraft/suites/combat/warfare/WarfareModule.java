@@ -21,10 +21,20 @@ public class WarfareModule extends AbstractSuiteModule {
         super(plugin, "warfare", "SlimefunWarfare Ballistics & Exoskeletons");
     }
 
+    static boolean isStandaloneSlimefunWarfarePresent() {
+        return Bukkit.getPluginManager() != null
+                && Bukkit.getPluginManager().getPlugin("SlimefunWarfare") != null;
+    }
+
     @Override
     public void onEnable() {
         this.atomicAmmoConsumption = config.getBoolean("anti-dupe.ammo-consumption-atomic", true);
         boolean asyncRaytrace = config.getBoolean("performance.bullet-raytrace-async", true);
+
+        if (isStandaloneSlimefunWarfarePresent()) {
+            getPlugin().getLogger().info("[DrakesCombat] Plugin standalone SlimefunWarfare detectado; cediendo listener al addon dedicado.");
+            return;
+        }
 
         this.listener = new WarfareListener(this, this.registry);
         Bukkit.getPluginManager().registerEvents(this.listener, getPlugin());

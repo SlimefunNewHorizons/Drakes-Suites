@@ -32,10 +32,20 @@ public class MobDropsModule extends AbstractSuiteModule implements Listener {
         super(plugin, "sfmobdrops", "SFMobDrops Custom Loot Tables");
     }
 
+    static boolean isStandaloneSFMobDropsPresent() {
+        return Bukkit.getPluginManager() != null
+                && Bukkit.getPluginManager().getPlugin("SFMobDrops") != null;
+    }
+
     @Override
     public void onEnable() {
         dropRules.clear();
         loadDefaultRules();
+
+        if (isStandaloneSFMobDropsPresent()) {
+            logInfo("Plugin standalone SFMobDrops detectado; cediendo listener de drops al addon dedicado.");
+            return;
+        }
 
         Bukkit.getPluginManager().registerEvents(this, plugin);
         logInfo("SFMobDrops cargado con reglas para " + dropRules.size() + " tipos de entidades.");

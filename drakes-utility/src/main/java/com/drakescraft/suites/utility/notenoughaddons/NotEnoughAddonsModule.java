@@ -31,10 +31,20 @@ public class NotEnoughAddonsModule extends AbstractSuiteModule implements Listen
         super(plugin, "notenoughaddons", "NotEnoughAddons Expansion & Terraria Tools");
     }
 
+    static boolean isStandaloneNotEnoughAddonsPresent() {
+        return Bukkit.getPluginManager() != null
+                && Bukkit.getPluginManager().getPlugin("NotEnoughAddons") != null;
+    }
+
     @Override
     public void onEnable() {
         this.angelBlock = new AngelBlock(getPlugin());
         this.flyingBubble = new FlyingBubble();
+
+        if (isStandaloneNotEnoughAddonsPresent()) {
+            logInfo("Plugin standalone NotEnoughAddons detectado; cediendo listeners al addon dedicado.");
+            return;
+        }
 
         this.minerBackpackListener = new MinerBackpackListener(getPlugin());
         this.shortswordListener = new TerrariaShortswordListener();
@@ -48,7 +58,7 @@ public class NotEnoughAddonsModule extends AbstractSuiteModule implements Listen
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (!isEnabled()) return;
+        if (!isEnabled() || isStandaloneNotEnoughAddonsPresent()) return;
         if (event.getHand() != EquipmentSlot.HAND) return;
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 

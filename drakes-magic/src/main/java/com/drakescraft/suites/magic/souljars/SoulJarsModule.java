@@ -21,6 +21,11 @@ public class SoulJarsModule extends AbstractSuiteModule {
         super(plugin, "soul_jars", "Soul Containment Jars");
     }
 
+    static boolean isStandaloneSoulJarsPresent() {
+        return Bukkit.getPluginManager() != null
+                && Bukkit.getPluginManager().getPlugin("SoulJars") != null;
+    }
+
     @Override
     public void onEnable() {
         // Cargar posibles personalizaciones de requisitos de almas desde la configuración del módulo
@@ -33,6 +38,11 @@ public class SoulJarsModule extends AbstractSuiteModule {
                     registry.setRequiredSouls(type, souls);
                 } catch (IllegalArgumentException ignored) {}
             }
+        }
+
+        if (isStandaloneSoulJarsPresent()) {
+            getPlugin().getLogger().info("[DrakesMagic] Plugin standalone SoulJars detectado; cediendo listener al addon dedicado.");
+            return;
         }
 
         // Registrar listener

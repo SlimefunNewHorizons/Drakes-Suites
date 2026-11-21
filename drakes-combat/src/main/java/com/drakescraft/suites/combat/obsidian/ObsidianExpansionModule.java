@@ -25,12 +25,22 @@ public class ObsidianExpansionModule extends AbstractSuiteModule implements List
         super(plugin, "obsidian_expansion", "ObsidianExpansion & ObsidianArmor T10 Plating");
     }
 
+    static boolean isStandaloneObsidianPluginPresent() {
+        var pm = org.bukkit.Bukkit.getPluginManager();
+        return pm != null && (pm.getPlugin("ObsidianExpansion") != null || pm.getPlugin("Obsidian-Armor") != null);
+    }
+
     @Override
     public void onEnable() {
         this.damageReductionMemoization = config.getBoolean("performance.damage-reduction-memoization", true);
         this.fullSuitBonusCheck = config.getBoolean("anti-dupe.full-suit-set-bonus-check", true);
         this.blastAbsorptionPlate = config.getBoolean("features.blast-absorption-plate", true);
         this.trueDamageResistance = config.getDouble("features.true-damage-resistance", 0.25);
+
+        if (isStandaloneObsidianPluginPresent()) {
+            logInfo("Plugin standalone ObsidianExpansion/Obsidian-Armor detectado; cediendo listener al addon dedicado.");
+            return;
+        }
 
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         logInfo("ObsidianExpansion module enabled (blastAbsorption=" + blastAbsorptionPlate + ", trueDamageRes=" + trueDamageResistance + ").");
