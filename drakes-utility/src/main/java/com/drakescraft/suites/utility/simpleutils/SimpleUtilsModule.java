@@ -50,8 +50,18 @@ public class SimpleUtilsModule extends AbstractSuiteModule implements Listener {
         this.elevatorMaxDistance = config.getInt("elevator.max-distance", 64);
         this.elevatorSoundEnabled = config.getBoolean("elevator.enable-sound", true);
 
+        if (isStandaloneSimpleUtilsPresent()) {
+            logInfo("Plugin standalone SimpleUtils detectado; cediendo eventos de Simple Workbench y elevadores al addon dedicado.");
+            return;
+        }
+
         Bukkit.getPluginManager().registerEvents(this, plugin);
         logInfo("SimpleUtils cargado con elevadores de distancia máxima " + elevatorMaxDistance + " bloques.");
+    }
+
+    static boolean isStandaloneSimpleUtilsPresent() {
+        return Bukkit.getPluginManager() != null
+                && Bukkit.getPluginManager().getPlugin("SimpleUtils") != null;
     }
 
     @Override
@@ -154,7 +164,11 @@ public class SimpleUtilsModule extends AbstractSuiteModule implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onWorkbenchInteract(PlayerInteractEvent e) {
-        if (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK) {
+        if (isStandaloneSimpleUtilsPresent()) {
+            return;
+        }
+        // Only open portable workbench on RIGHT_CLICK_AIR; never intercept RIGHT_CLICK_BLOCK so the block can be placed.
+        if (e.getAction() != Action.RIGHT_CLICK_AIR) {
             return;
         }
         if (e.getHand() != EquipmentSlot.HAND) {
