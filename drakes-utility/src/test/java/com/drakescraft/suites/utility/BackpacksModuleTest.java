@@ -82,4 +82,22 @@ class BackpacksModuleTest {
         player.closeInventory();
         assertFalse(module.getBackpackStorageCache().isEmpty());
     }
+
+    @Test
+    @DisplayName("BackpacksModule nunca intercepta ENDER_BACKPACK ni mochilas nativas de Slimefun")
+    void testDoesNotInterceptEnderBackpack() {
+        BackpacksModule module = (BackpacksModule) plugin.getModuleManager().getModule("backpacks");
+        assertNotNull(module);
+
+        ItemStack enderBackpack = new ItemStack(Material.PLAYER_HEAD);
+        SuiteItemPdcBridge.setSlimefunId(enderBackpack, "ENDER_BACKPACK");
+
+        assertFalse(module.isStarSuitesBackpack(enderBackpack),
+                "ENDER_BACKPACK nunca debe ser interceptada por BackpacksModule");
+
+        ItemStack nativeSfBackpack = new ItemStack(Material.PLAYER_HEAD);
+        SuiteItemPdcBridge.setSlimefunId(nativeSfBackpack, "LARGE_BACKPACK");
+        assertFalse(module.isStarSuitesBackpack(nativeSfBackpack),
+                "Mochilas nativas de Slimefun sin PDC drakesutility no deben ser interceptadas");
+    }
 }

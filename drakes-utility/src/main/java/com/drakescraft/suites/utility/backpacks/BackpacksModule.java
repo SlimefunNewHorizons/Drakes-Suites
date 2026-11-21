@@ -13,9 +13,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -42,6 +44,7 @@ public class BackpacksModule extends AbstractSuiteModule implements Listener {
     private final Map<String, ItemStack[]> backpackStorageCache = new ConcurrentHashMap<>();
     private final Set<UUID> openBackpackPlayers = ConcurrentHashMap.newKeySet();
     private final Map<UUID, String> playerCurrentBackpackId = new ConcurrentHashMap<>();
+    private final Map<UUID, Inventory> openBackpackInventories = new ConcurrentHashMap<>();
 
     private boolean dyeableEnabled = true;
     private int maxFilterSlots = 18;
@@ -74,6 +77,7 @@ public class BackpacksModule extends AbstractSuiteModule implements Listener {
         }
         openBackpackPlayers.clear();
         playerCurrentBackpackId.clear();
+        openBackpackInventories.clear();
         logInfo("Módulo de Mochilas deshabilitado limpiamente.");
     }
 
@@ -135,6 +139,23 @@ public class BackpacksModule extends AbstractSuiteModule implements Listener {
         return sfId != null && (sfId.contains("BACKPACK") || sfId.startsWith("DYED_BACKPACK"));
     }
 
+    /**
+     * Comprueba si un ItemStack es una mochila gestionada nativamente por DrakesUtility (StarSuites).
+     * Nunca intercepta ENDER_BACKPACK ni mochilas nativas de Slimefun/DyedBackpacks para evitar
+     * conflictos de doble inventario y duplicación de Ender Chest.
+     */
+    public boolean isStarSuitesBackpack(ItemStack item) {
+        if (item == null || item.getType().isAir()) {
+            return false;
+        }
+        String sfId = SuiteItemPdcBridge.getSlimefunId(item);
+        if (sfId != null && sfId.equalsIgnoreCase("ENDER_BACKPACK")) {
+            return false;
+        }
+        Integer slots = SuiteItemPdcBridge.getCustomInt(item, NAMESPACE, KEY_BACKPACK_SLOTS);
+        return slots != null && slots > 0;
+    }
+
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (!isEnabled()) return;
@@ -142,9 +163,19 @@ public class BackpacksModule extends AbstractSuiteModule implements Listener {
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
         ItemStack item = event.getItem();
-        if (item == null || !isBackpack(item)) return;
+        if (item == null || !isStarSuitesBackpack(item)) return;
 
         Player player = event.getPlayer();
+
+        // Evitar abrir una mochila si ya existe otro contenedor abierto (previene desync/dupe en InventoryCloseEvent)
+        InventoryView openView = player.getOpenInventory();
+        if (openView != null && openView.getTopInventory() != null) {
+            InventoryType topType = openView.getTopInventory().getType();
+            if (topType != InventoryType.CRAFTING && topType != InventoryType.CREATIVE) {
+                event.setCancelled(true);
+                return;
+            }
+        }
 
         // 1. Verificación anti-dupe de integridad física del ítem
         if (!SuiteItemPdcBridge.validateItemIntegrity(item, player.getName(), player.getLocation().toString())) {
@@ -165,14 +196,7 @@ public class BackpacksModule extends AbstractSuiteModule implements Listener {
         // 3. Determinar tamaño
         Integer slots = SuiteItemPdcBridge.getCustomInt(item, NAMESPACE, KEY_BACKPACK_SLOTS);
         if (slots == null || slots <= 0) {
-            String sfId = SuiteItemPdcBridge.getSlimefunId(item);
-            if (sfId != null && sfId.contains("SMALL")) slots = 9;
-            else if (sfId != null && sfId.contains("MEDIUM")) slots = 18;
-            else if (sfId != null && sfId.contains("LARGE")) slots = 27;
-            else if (sfId != null && sfId.contains("WOVEN")) slots = 36;
-            else if (sfId != null && sfId.contains("GILDED")) slots = 45;
-            else if (sfId != null && sfId.contains("RADIANT")) slots = 54;
-            else slots = 27;
+            slots = 27;
         }
 
         // 4. Crear o recuperar inventario virtual
@@ -191,10 +215,11 @@ public class BackpacksModule extends AbstractSuiteModule implements Listener {
             inv.setContents(stored);
         }
 
+        // Abrir ANTES de registrar en el mapa para que cualquier InventoryCloseEvent previo jamás sobreescriba la caché
+        player.openInventory(inv);
         openBackpackPlayers.add(player.getUniqueId());
         playerCurrentBackpackId.put(player.getUniqueId(), backpackId);
-
-        player.openInventory(inv);
+        openBackpackInventories.put(player.getUniqueId(), inv);
 
         if (soundFeedback) {
             try {
@@ -241,6 +266,11 @@ public class BackpacksModule extends AbstractSuiteModule implements Listener {
         if (!(event.getPlayer() instanceof Player player)) return;
 
         UUID uuid = player.getUniqueId();
+        Inventory expected = openBackpackInventories.get(uuid);
+        if (expected == null || event.getInventory() != expected) {
+            return;
+        }
+        openBackpackInventories.remove(uuid);
         if (openBackpackPlayers.remove(uuid)) {
             String backpackId = playerCurrentBackpackId.remove(uuid);
             if (backpackId != null) {
