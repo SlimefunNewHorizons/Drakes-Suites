@@ -103,4 +103,37 @@ class EnderCarryOnModuleTest {
         assertTrue(CarryHelper.isSlimefunOrCustomTileBlock(chestBlock),
                 "Un bloque con PDC personalizado debe ser rechazado por CarryHelper");
     }
+
+    @Test
+    @DisplayName("Picking up a chest clears live block inventory before removal to prevent drop+carry duplication")
+    void testCarryClearsLiveContainerBeforeAirRemoval() {
+        WorldMock world = server.addSimpleWorld("carry_nodup_world");
+        var player = server.addPlayer("CarryNoDupPlayer");
+        player.setSneaking(true);
+        player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+
+        Block chestBlock = world.getBlockAt(20, 64, 20);
+        chestBlock.setType(Material.CHEST);
+        org.bukkit.block.Chest chestState = (org.bukkit.block.Chest) chestBlock.getState();
+        chestState.getInventory().setItem(0, new ItemStack(Material.DIAMOND, 16));
+        chestState.update();
+
+        var rightClick = new org.bukkit.event.player.PlayerInteractEvent(
+                player,
+                org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK,
+                new ItemStack(Material.AIR),
+                chestBlock,
+                org.bukkit.block.BlockFace.UP,
+                org.bukkit.inventory.EquipmentSlot.HAND
+        );
+        module.onPlayerInteract(rightClick);
+
+        assertTrue(rightClick.isCancelled(), "Carry pickup must cancel the interact event");
+        assertEquals(Material.AIR, chestBlock.getType(), "Original chest block must be replaced with AIR");
+        assertTrue(chestState.getInventory().isEmpty(),
+                "Live container inventory must be cleared before setType(AIR) so vanilla does not drop a duplicate copy");
+
+        ItemStack held = player.getInventory().getItemInMainHand();
+        assertTrue(EnderCarryOnModule.isCarriedItem(held), "Player must hold the carried chest item");
+    }
 }

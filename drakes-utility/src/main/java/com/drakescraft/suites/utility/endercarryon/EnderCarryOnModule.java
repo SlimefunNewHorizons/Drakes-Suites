@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.Container;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntitySnapshot;
 import org.bukkit.entity.Player;
@@ -87,9 +88,12 @@ public class EnderCarryOnModule extends AbstractSuiteModule implements Listener 
             Block clickedBlock = event.getClickedBlock();
             if (clickedBlock != null) {
                 ItemStack carryBlock = CarryHelper.getCarryBlock(clickedBlock);
+                if (clickedBlock.getState() instanceof Container liveContainer) {
+                    liveContainer.getInventory().clear();
+                }
                 int selectedSlot = player.getInventory().getHeldItemSlot();
                 player.getInventory().setItem(selectedSlot, carryBlock);
-                clickedBlock.setType(Material.AIR);
+                clickedBlock.setType(Material.AIR, false);
                 event.setCancelled(true);
             }
         }
