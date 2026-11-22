@@ -3,6 +3,7 @@ package com.drakescraft.suites.server;
 import com.drakescraft.suites.core.DrakesCorePlugin;
 import com.drakescraft.suites.core.module.GenericSuiteModule;
 import com.drakescraft.suites.core.module.SuiteModuleManager;
+import com.drakescraft.suites.server.compensation.CompensationModule;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -12,6 +13,7 @@ public class DrakesServerPlugin extends JavaPlugin {
 
     private static DrakesServerPlugin instance;
     private SuiteModuleManager moduleManager;
+    private CompensationModule compensationModule;
 
     @Override
     public void onEnable() {
@@ -37,6 +39,9 @@ public class DrakesServerPlugin extends JavaPlugin {
 
         this.moduleManager.enableAll();
 
+        this.compensationModule = new CompensationModule(this);
+        this.compensationModule.register();
+
         // Registrar en DrakesCore
         if (DrakesCorePlugin.getInstance() != null && DrakesCorePlugin.getInstance().getSuiteRegistry() != null) {
             DrakesCorePlugin.getInstance().getSuiteRegistry().registerSuite("server", this, this.moduleManager);
@@ -47,6 +52,10 @@ public class DrakesServerPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (compensationModule != null) {
+            compensationModule.shutdown();
+            compensationModule = null;
+        }
         if (DrakesCorePlugin.getInstance() != null && DrakesCorePlugin.getInstance().getSuiteRegistry() != null) {
             DrakesCorePlugin.getInstance().getSuiteRegistry().unregisterSuite("server");
         }

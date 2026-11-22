@@ -5,3 +5,17 @@ api-version: '26.2'
 author: SlimefunNewHorizons
 description: "Mega-Suite de Servidor y Gameplay Standalone: Motor Odysseia, Economia y Social."
 depend: [DrakesCore, Slimefun]
+commands:
+  devolucion:
+    description: "Gestiona cofres de devolucion por bug para jugadores online u offline."
+    usage: "/devolucion <dar|lote|mano|ver|limpiar|cofre>"
+    aliases: [devoluciones, compensar]
+    permission: drakes.devolucion.admin
+  reclamar:
+    description: "Abre tu Cofre de Devoluciones por bug en Survival."
+    usage: "/reclamar"
+    aliases: [cofrebug, misdevoluciones]
+permissions:
+  drakes.devolucion.admin:
+    description: "Permite cargar, inspeccionar y limpiar cofres de devolucion por bug."
+    default: op
