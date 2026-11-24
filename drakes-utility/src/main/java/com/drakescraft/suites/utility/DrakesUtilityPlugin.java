@@ -41,6 +41,8 @@ public class DrakesUtilityPlugin extends JavaPlugin {
         this.moduleManager.registerModule(new com.drakescraft.suites.utility.endercarryon.EnderCarryOnModule(this));
         this.moduleManager.registerModule(new com.drakescraft.suites.utility.vanillapatpat.VanillaPatPatModule(this));
         this.moduleManager.registerModule(new com.drakescraft.suites.utility.notenoughaddons.NotEnoughAddonsModule(this));
+        this.moduleManager.registerModule(new com.drakescraft.suites.utility.compressioncraft.CompressionCraftModule(this));
+        this.moduleManager.registerModule(new com.drakescraft.suites.utility.dyebench.DyeBenchModule(this));
 
         this.moduleManager.enableAll();
 
