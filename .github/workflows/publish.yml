@@ -1,0 +1,42 @@
+name: Publish
+on:
+  push:
+    branches: [26.x]
+    paths:
+      - 'pom.xml'
+      - 'drakes-*/src/**'
+      - 'drakes-*/pom.xml'
+  release:
+    types: [published]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  publish:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: DrakesServer
+            file: drakes-server/target/DrakesServer-v*.jar
+          - project: DrakesMultiverse
+            file: drakes-multiverse/target/drakes-multiverse.jar
+          - project: DrakesBio
+            file: drakes-bio/target/DrakesBio-v*.jar
+          - project: DrakesCombat
+            file: drakes-combat/target/DrakesCombat-v*.jar
+          - project: DrakesGenerators
+            file: drakes-generators/target/DrakesGenerators-v*.jar
+          - project: DrakesMagic
+            file: drakes-magic/target/DrakesMagic-v*.jar
+          - project: DrakesTech
+            file: drakes-tech/target/DrakesTech-v*.jar
+          - project: DrakesUtility
+            file: drakes-utility/target/DrakesUtility-v*.jar
+    uses: SlimefunNewHorizons/.github/.github/workflows/publish-blob.yml@main
+    with:
+      project: ${{ matrix.project }}
+      file: ${{ matrix.file }}
+      java-version: '25'
+      blob: false
+    secrets: inherit
