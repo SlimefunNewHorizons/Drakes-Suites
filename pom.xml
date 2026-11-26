@@ -267,11 +267,6 @@
             </dependency>
             <dependency>
                 <groupId>com.github.drakescraft_labs</groupId>
-                <artifactId>ColoredEnderChests-drake</artifactId>
-                <version>1.20.6-Drake-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.drakescraft_labs</groupId>
                 <artifactId>ChestTerminal-drake</artifactId>
                 <version>1.0-Universal-26.x-SNAPSHOT</version>
             </dependency>
@@ -304,11 +299,6 @@
             <dependency>
                 <groupId>com.github.drakescraft_labs</groupId>
                 <artifactId>ExtraGear-drake</artifactId>
-                <version>1.0-Universal-26.x-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.drakescraft_labs</groupId>
-                <artifactId>SlimefunLuckyBlocks-drake</artifactId>
                 <version>1.0-Universal-26.x-SNAPSHOT</version>
             </dependency>
             <dependency>

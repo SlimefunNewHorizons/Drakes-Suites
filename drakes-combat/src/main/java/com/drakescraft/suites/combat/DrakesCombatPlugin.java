@@ -25,7 +25,7 @@ public class DrakesCombatPlugin extends JavaPlugin {
         this.moduleManager.registerModule(new com.drakescraft.suites.combat.tinker.SlimeTinkerModule(this));
         this.moduleManager.registerModule(new com.drakescraft.suites.combat.warfare.WarfareModule(this));
         this.moduleManager.registerModule(new com.drakescraft.suites.combat.extragear.ExtraGearModule(this));
-        this.moduleManager.registerModule(new GenericSuiteModule(this, "luckyblocks", "LuckyBlocks SF Mechanics"));
+        this.moduleManager.registerModule(new com.drakescraft.suites.combat.luckyblocks.LuckyBlocksModule(this));
         this.moduleManager.registerModule(new GenericSuiteModule(this, "galaxyfun", "Galaxyfun Exo-Space Combat"));
         this.moduleManager.registerModule(new GenericSuiteModule(this, "missilewarfare", "MissileWarfare Ballistics"));
         this.moduleManager.registerModule(new com.drakescraft.suites.combat.mobdrops.MobDropsModule(this));

@@ -1,0 +1,6 @@
+# DrakesUtility - CompressionCraft
+enabled: true
+performance:
+  recipe-cache: true
+logging:
+  log-file: "compressioncraft-audit.log"

@@ -51,11 +51,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.drakescraft_labs</groupId>
-            <artifactId>SlimefunLuckyBlocks-drake</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
         </dependency>

@@ -1,0 +1,6 @@
+# DrakesUtility - DyeBench
+enabled: true
+performance:
+  pigment-cache: true
+logging:
+  log-file: "dyebench-audit.log"
