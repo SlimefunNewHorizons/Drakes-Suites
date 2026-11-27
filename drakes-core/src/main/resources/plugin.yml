@@ -13,3 +13,13 @@ commands:
     description: Administra las 8 Mega-Suites de DrakesCraft
     permission: drakes.suites.admin
     aliases: [drakes, suites, dsuite]
+  balance:
+    description: Check your Dracmas balance via Vault/InvSwitcher
+    permission: drakes.economy.balance
+    aliases: [bal, money]
+  pay:
+    description: Transfer Dracmas to another player via Vault/InvSwitcher
+    permission: drakes.economy.pay
+  eco:
+    description: Administer player Dracmas via Vault/InvSwitcher
+    permission: drakes.economy.admin

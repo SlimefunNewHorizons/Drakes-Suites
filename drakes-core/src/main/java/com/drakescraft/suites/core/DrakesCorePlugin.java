@@ -131,10 +131,18 @@ public class DrakesCorePlugin extends JavaPlugin {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
             return;
         }
+        net.milkbowl.vault.economy.Economy router = com.drakescraft.suites.core.economy.EconomyRouter.create(
+                com.drakescraft.suites.core.economy.EconomyRouter.bukkitResolver(), getLogger());
         getServer().getServicesManager().register(net.milkbowl.vault.economy.Economy.class,
-                com.drakescraft.suites.core.economy.EconomyRouter.create(
-                        com.drakescraft.suites.core.economy.EconomyRouter.bukkitResolver(), getLogger()),
-                this, org.bukkit.plugin.ServicePriority.Highest);
-        getLogger().info("[Economy] Router Vault registrado (InvSwitcher > Essentials).");
+                router, this, org.bukkit.plugin.ServicePriority.Highest);
+        var ecoCmd = new com.drakescraft.suites.core.economy.VaultEconomyCommand(router);
+        for (String name : new String[] { "balance", "pay", "eco" }) {
+            var cmd = getCommand(name);
+            if (cmd != null) {
+                cmd.setExecutor(ecoCmd);
+                cmd.setTabCompleter(ecoCmd);
+            }
+        }
+        getLogger().info("[Economy] Router Vault registrado (InvSwitcher > Essentials) + comandos /bal, /pay, /eco.");
     }
 }
